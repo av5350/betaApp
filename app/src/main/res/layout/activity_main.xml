@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".SignUpActivity">
 
     <Space
         android:layout_width="0dp"
@@ -20,18 +20,146 @@
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="5" />
 
-        <TextView
+        <LinearLayout
+            android:id="@+id/logInOptionLayout"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
-            android:text="ברוכים הבאים!" />
+            android:layout_weight="3"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Space
+                android:layout_width="0sp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center|right"
+                android:text="phone" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5" />
+
+            <Switch
+                android:id="@+id/logInOption"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="2"
+                android:gravity="center"
+                android:onClick="onSwitchOption" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="0.5" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="3"
+                android:gravity="center|left"
+                android:text="email" />
+
+            <Space
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1" />
+        </LinearLayout>
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/phoneET"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:ems="10"
+            android:hint="phone"
+            android:inputType="phone" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/mailET"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:ems="10"
+            android:hint="email"
+            android:inputType="textEmailAddress" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:id="@+id/getSmsCodeBtn"
+            android:layout_width="match_parent"
+            android:layout_height="3dp"
+            android:layout_weight="3"
+            android:onClick="getCode"
+            android:text="Get code" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <EditText
+            android:id="@+id/codeET"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:ems="10"
+            android:hint="verification code"
+            android:inputType="numberDecimal" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="3"
+            android:onClick="finishRegister"
+            android:text="finish" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
+        <TextView
+            android:id="@+id/currentStateET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:onClick="changeCurrentState"
+            android:text="TO LOG IN"
+            android:textColor="#E91E63"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5" />
 
     </LinearLayout>
 
@@ -39,5 +167,4 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1" />
-
 </LinearLayout>
