@@ -19,6 +19,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.ActionCodeSettings;
 import com.google.firebase.auth.AuthResult;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -62,48 +65,51 @@ public class MainActivity extends AppCompatActivity {
 
         if (signInState.getBoolean("isMailSent", false)) {
             Intent intent = getIntent();
-            String emailLink = intent.getData().toString();
 
-            // put the isMailSent var back to false (so it would not read the file every time)
-            SharedPreferences.Editor editor = signInState.edit();
-            editor.putBoolean("isMailSent", false);
-            editor.commit();
+            if (intent.getData() != null) {
+                String emailLink = intent.getData().toString();
 
-            // Confirm the link is a sign-in with email link.
-            if (FBref.auth.isSignInWithEmailLink(emailLink)) {
-                FBref.auth.signInWithEmailLink(signInState.getString("mail", ""), emailLink)
-                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if (task.isSuccessful()) {
-                                    linkMailPhone(gson.fromJson(signInState.getString("credential", ""), PhoneAuthCredential.class));
-                                } else {
-                                    // לערוך את ההודעה שקופצת TODO
-                                    Toast.makeText(MainActivity.this, "error in isSignInWithEmailLink", Toast.LENGTH_SHORT).show();
+                // Confirm the link is a sign-in with email link.
+                if (FBref.auth.isSignInWithEmailLink(emailLink)) {
+                    FBref.auth.signInWithEmailLink(signInState.getString("mail", ""), emailLink)
+                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                                @Override
+                                public void onComplete(@NonNull Task<AuthResult> task) {
+                                    if (task.isSuccessful()) {
+                                        if(!signInState.getBoolean("isSignIn", SIGN_UP_STATE)) {
+                                            linkMailPhone(gson.fromJson(signInState.getString("credential", ""), PhoneAuthCredential.class));
+                                        }
+                                        else {
+                                            FirebaseUser u = FBref.auth.getCurrentUser();
+                                            Toast.makeText(MainActivity.this, "SIGN IN WITH MAIL - SUCCESS!!!", Toast.LENGTH_SHORT).show();
+                                            FBref.auth.signOut();
+                                        }
+                                    } else {
+                                        // לערוך את ההודעה שקופצת TODO
+                                        Toast.makeText(MainActivity.this, "error in isSignInWithEmailLink", Toast.LENGTH_SHORT).show();
+                                    }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         }
-        else{
-            callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-                @Override
-                public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
-                    signInWithPhoneAuthCredential(phoneAuthCredential);
-                }
+        callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+            @Override
+            public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
+                signInWithPhoneAuthCredential(phoneAuthCredential);
+            }
 
-                // todo: האם להשאיר את הפונקציה הזאת בלי כלום בתוכה?
-                @Override
-                public void onVerificationFailed(@NonNull FirebaseException e) {
-                }
+            // todo: האם להשאיר את הפונקציה הזאת בלי כלום בתוכה?
+            @Override
+            public void onVerificationFailed(@NonNull FirebaseException e) {
+            }
 
-                @Override
-                public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
-                    // Save verification ID so we can use them later
-                    storedVerificationId = verificationId;
-                }
-            };
-        }
+            @Override
+            public void onCodeSent(@NonNull String verificationId, @NonNull PhoneAuthProvider.ForceResendingToken token) {
+                // Save verification ID so we can use it later
+                storedVerificationId = verificationId;
+            }
+        };
     }
 
     public void linkMailPhone(PhoneAuthCredential credential) {
@@ -121,38 +127,65 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
-        ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
-                // URL I want to redirect back to.
-                .setUrl("https://betasignup.page.link/finishSignUp")
-                .setHandleCodeInApp(true)
-                .setAndroidPackageName(
-                        "com.example.betaapp",
-                        false,
-                        null)
-                .build();
+        // if its signup or signin with mail
+        if ((currentState == SIGN_UP_STATE) || (logInOption.isChecked())) {
+            ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
+                    // URL I want to redirect back to.
+                    .setUrl("https://betasignup.page.link/finishSignUp")
+                    .setHandleCodeInApp(true)
+                    .setAndroidPackageName(
+                            "com.example.betaapp",
+                            false,
+                            null)
+                    .build();
 
-        FBref.auth.sendSignInLinkToEmail(mailET.getText().toString(), actionCodeSettings)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(MainActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
+            FBref.auth.sendSignInLinkToEmail(mailET.getText().toString(), actionCodeSettings)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                Toast.makeText(MainActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
 
-                            // Save the mail, the current phone credential
-                            SharedPreferences signInState = getSharedPreferences("Sign_In_State", MODE_PRIVATE);
-                            SharedPreferences.Editor editor = signInState.edit();
-                            editor.putBoolean("isMailSent", true);
-                            editor.putString("mail", mailET.getText().toString());
+                                // Save the mail, the current phone credential
+                                SharedPreferences signInState = getSharedPreferences("Sign_In_State", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = signInState.edit();
+                                editor.putBoolean("isMailSent", true);
+                                editor.putString("mail", mailET.getText().toString());
+                                editor.putBoolean("isSignIn", currentState);
 
-                            final Gson gson = new Gson();
-                            String serializedObject = gson.toJson(credential);
-                            editor.putString("credential", serializedObject);
-                            editor.commit();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Email wasnt sent :( !!!!!!", Toast.LENGTH_SHORT).show();
+                                // if its signup - need to save phone credential
+                                if (currentState == SIGN_UP_STATE) {
+                                    final Gson gson = new Gson();
+                                    String serializedObject = gson.toJson(credential);
+                                    editor.putString("credential", serializedObject);
+                                }
+                                editor.commit();
+                            } else {
+                                Toast.makeText(MainActivity.this, "Email wasnt sent :( !!!!!!", Toast.LENGTH_SHORT).show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+        else{ // we are in sign in with phone
+            FBref.auth.signInWithCredential(credential)
+                    .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                        @Override
+                        public void onComplete(@NonNull Task<AuthResult> task) {
+                            if (task.isSuccessful()) {
+                                // Sign in success
+                                FirebaseUser user = task.getResult().getUser();
+                                Toast.makeText(MainActivity.this, "SIGN IN WITH PHONE - SUCCESS!!!", Toast.LENGTH_SHORT).show();
+                                FBref.auth.signOut();
+                            } else {
+                                // Sign in failed
+                                if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
+                                    // The verification code entered was invalid
+                                    Toast.makeText(MainActivity.this, "Bad varification code. try again", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                    });
+        }
     }
 
     public void getCode(View view) {
@@ -167,17 +200,14 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void finishRegister(View view) {
-        if (currentState == SIGN_UP_STATE) {
-            PhoneAuthCredential credential = PhoneAuthProvider.getCredential(storedVerificationId, codeET.getText().toString());
-            signInWithPhoneAuthCredential(credential);
-            // todo: signInWithPhoneAuthCredential האם צריך פעמיים בקוד קריאה ל ?
+        PhoneAuthCredential credential = null;
+
+        // phone login or full signup
+        if (!logInOption.isChecked() || currentState == SIGN_UP_STATE)
+        {
+            credential = PhoneAuthProvider.getCredential(storedVerificationId, codeET.getText().toString());
         }
-        else { // its login state
-            if (logInOption.isChecked()) { // login with email
-            }
-            else { // login with phone
-            }
-        }
+        signInWithPhoneAuthCredential(credential);
     }
 
     public void changeCurrentState(View view) {
