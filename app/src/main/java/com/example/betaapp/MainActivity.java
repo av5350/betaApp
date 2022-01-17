@@ -25,8 +25,12 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
@@ -119,6 +123,10 @@ public class MainActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(MainActivity.this, "LASTTTTTTT", Toast.LENGTH_SHORT).show();
+
+                            // upload the new user to firebase database
+                            User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null);
+                            FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
                         } else {
                             Toast.makeText(MainActivity.this, "There was an error", Toast.LENGTH_SHORT).show();
                         }

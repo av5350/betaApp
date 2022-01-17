@@ -1,8 +1,16 @@
 package com.example.betaapp;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class FBref {
     final static FirebaseAuth auth = FirebaseAuth.getInstance();
-    //final static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
+
+    public static FirebaseDatabase FBDB = FirebaseDatabase.getInstance();
+
+    // public static DatabaseReference refStudents = FBDB.getReference("Students");
+    public static DatabaseReference refUsers = FBDB.getReference("Users");
+
+    // final static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 }
