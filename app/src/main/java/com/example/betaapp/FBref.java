@@ -11,6 +11,7 @@ public class FBref {
 
     // public static DatabaseReference refStudents = FBDB.getReference("Students");
     public static DatabaseReference refUsers = FBDB.getReference("Users");
+    public static DatabaseReference refStudents = FBDB.getReference("Students");
 
     // final static StorageReference storageRef = FirebaseStorage.getInstance().getReference();
 }

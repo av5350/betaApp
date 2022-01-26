@@ -10,6 +10,15 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BetaApp">
         <activity
+            android:name=".SelectChildActivity"
+            android:exported="false" />
+        <activity
+            android:name=".AdminSortDataActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FormActivity"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>

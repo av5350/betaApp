@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
 
         getSmsCodeBtn = (Button) findViewById(R.id.getSmsCodeBtn);
 
-        SharedPreferences signInState = getSharedPreferences("Sign_In_State", MODE_PRIVATE);
+        SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
 
         if (signInState.getBoolean("isMailSent", false)) {
             Intent intent = getIntent();
@@ -97,6 +97,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
+        // if the user saved the login credential - sign in the user
+        else if (!signInState.getString("credential", "").equals(""))
+        {
+            FBref.auth.signInWithCredential(gson.fromJson(signInState.getString("credential", ""), PhoneAuthCredential.class));
+            Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
+            startActivity(si);
+        }
+
         callbacks = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             @Override
             public void onVerificationCompleted(@NonNull PhoneAuthCredential phoneAuthCredential) {
@@ -127,6 +135,9 @@ public class MainActivity extends AppCompatActivity {
                             // upload the new user to firebase database
                             User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null);
                             FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
+
+                            Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
+                            startActivity(si);
                         } else {
                             Toast.makeText(MainActivity.this, "There was an error", Toast.LENGTH_SHORT).show();
                         }
@@ -155,7 +166,7 @@ public class MainActivity extends AppCompatActivity {
                                 Toast.makeText(MainActivity.this, "Email sent", Toast.LENGTH_SHORT).show();
 
                                 // Save the mail, the current phone credential
-                                SharedPreferences signInState = getSharedPreferences("Sign_In_State", MODE_PRIVATE);
+                                SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
                                 SharedPreferences.Editor editor = signInState.edit();
                                 editor.putBoolean("isMailSent", true);
                                 editor.putString("mail", mailET.getText().toString());
@@ -183,7 +194,15 @@ public class MainActivity extends AppCompatActivity {
                                 // Sign in success
                                 FirebaseUser user = task.getResult().getUser();
                                 Toast.makeText(MainActivity.this, "SIGN IN WITH PHONE - SUCCESS!!!", Toast.LENGTH_SHORT).show();
-                                FBref.auth.signOut();
+
+                                SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
+                                SharedPreferences.Editor editor = signInState.edit();
+                                final Gson gson = new Gson();
+                                String serializedObject = gson.toJson(credential);
+                                editor.putString("credential", serializedObject);
+                                editor.commit();
+
+                                //todo: FBref.auth.signOut();
                             } else {
                                 // Sign in failed
                                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
