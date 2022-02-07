@@ -23,7 +23,7 @@
             android:layout_weight="0.5" />
 
         <SeekBar
-            android:id="@+id/seekBar2"
+            android:id="@+id/seekbarState"
             style="@style/Widget.AppCompat.SeekBar.Discrete"
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -38,6 +38,7 @@
             android:layout_weight="0.5" />
 
         <TextView
+            android:id="@+id/studentId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="stam text" />
@@ -47,12 +48,274 @@
             android:layout_height="0dp"
             android:layout_weight="0.5" />
 
-        <FrameLayout
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="8">
+            android:layout_weight="10">
 
-        </FrameLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" >
+
+                <EditText
+                    android:id="@+id/firstName"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="שם פרטי" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/lastName"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="שם משפחה" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/id"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="תעודת זהות" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <Spinner
+                    android:id="@+id/wantedClass"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/city"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="יישוב" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/street"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="רחוב" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/addressNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="מספר הבית" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/homeNumber"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="מספר הדירה" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/neighborhood"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="שכונה" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/zipCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="מיקוד" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/studentPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="טלפון נייד (תלמיד)" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/homePhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textPersonName"
+                    android:text="טלפון בבית" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/birthDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:text="תאריך לידה לועזי" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/birthDateHebrew"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:text="תאריך לידה עברי" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <Spinner
+                    android:id="@+id/currentSchool"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/studentMail"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text='דוא"ל (תלמיד)' />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <Spinner
+                    android:id="@+id/kupatHolim"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/birthCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="ארץ לידה" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/aliyaDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="date"
+                    android:text="תאריך עליה" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/tnuatNoar"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="text"
+                    android:text="חבר בתנועת נוער" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <Spinner
+                    android:id="@+id/maslul"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    tools:ignore="SpeakableTextPresentCheck" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/comments"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:inputType="textMultiLine|text"
+                    android:text="הערות" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+            </LinearLayout>
+        </ScrollView>
 
         <Space
             android:layout_width="match_parent"
@@ -62,7 +325,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:orientation="horizontal">
 
             <Space
@@ -74,6 +337,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:onClick="prevFragment"
                 android:text="prev" />
 
             <Space
@@ -85,6 +349,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:onClick="nextFragment"
                 android:text="next" />
 
             <Space
@@ -101,7 +366,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:orientation="horizontal">
 
             <Space

@@ -6,13 +6,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -20,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
-public class SelectChildActivity extends AppCompatActivity {
+public class SelectChildActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener {
     AlertDialog.Builder newChildDialog;
     ListView childrenLV;
     ArrayAdapter<String> adp;
@@ -32,6 +35,8 @@ public class SelectChildActivity extends AppCompatActivity {
         setContentView(R.layout.activity_select_child);
 
         childrenLV = (ListView) findViewById(R.id.childrenLV);
+
+        childrenLV.setOnItemLongClickListener(this);
 
         adp = new ArrayAdapter<String>(SelectChildActivity.this, R.layout.support_simple_spinner_dropdown_item, childrenID);
         childrenLV.setAdapter(adp);
@@ -46,8 +51,8 @@ public class SelectChildActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dS) {
                 for (DataSnapshot data : dS.getChildren()) {
                     childrenID.add(data.getValue(String.class));
-                    adp.notifyDataSetChanged();
                 }
+                adp.notifyDataSetChanged();
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
@@ -93,5 +98,14 @@ public class SelectChildActivity extends AppCompatActivity {
         });
 
         newChildDialog.show();
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        Intent si = new Intent(SelectChildActivity.this, FormActivity.class);
+        si.putExtra("id", childrenID.get(i));
+        startActivity(si);
+
+        return false;
     }
 }
