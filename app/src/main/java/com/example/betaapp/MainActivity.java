@@ -200,7 +200,13 @@ public class MainActivity extends AppCompatActivity {
                                 final Gson gson = new Gson();
                                 String serializedObject = gson.toJson(credential);
                                 editor.putString("credential", serializedObject);
+
+                                // if tried to log in with mail and then login with phone
+                                editor.putBoolean("isMailSent", false);
                                 editor.commit();
+
+                                Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
+                                startActivity(si);
 
                                 //todo: FBref.auth.signOut();
                             } else {

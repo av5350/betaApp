@@ -64,7 +64,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="שם פרטי" />
+                    android:hint="שם פרטי" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -76,19 +76,19 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="שם משפחה" />
+                    android:hint="שם משפחה" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <EditText
+                <TextView
                     android:id="@+id/id"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:ems="10"
-                    android:inputType="textPersonName"
-                    android:text="תעודת זהות" />
+                    android:gravity="center|right"
+                    android:text="TextView"
+                    android:textSize="16sp" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -110,7 +110,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="יישוב" />
+                    android:hint="יישוב" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -122,7 +122,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="רחוב" />
+                    android:hint="רחוב" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -134,7 +134,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="מספר הבית" />
+                    android:hint="מספר הבית" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -146,7 +146,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="מספר הדירה" />
+                    android:hint="מספר הדירה" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -158,7 +158,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="שכונה" />
+                    android:hint="שכונה" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -170,7 +170,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="מיקוד" />
+                    android:hint="מיקוד" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -182,7 +182,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="טלפון נייד (תלמיד)" />
+                    android:hint="טלפון נייד (תלמיד)" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -194,7 +194,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:text="טלפון בבית" />
+                    android:hint="טלפון בבית" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -206,7 +206,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="date"
-                    android:text="תאריך לידה לועזי" />
+                    android:hint="תאריך לידה לועזי" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -218,7 +218,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="date"
-                    android:text="תאריך לידה עברי" />
+                    android:hint="תאריך לידה עברי" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -240,7 +240,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:text='דוא"ל (תלמיד)' />
+                    android:hint='דוא"ל (תלמיד)' />
 
                 <Space
                     android:layout_width="match_parent"
@@ -262,7 +262,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:text="ארץ לידה" />
+                    android:hint="ארץ לידה" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -274,7 +274,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="date"
-                    android:text="תאריך עליה" />
+                    android:hint="תאריך עליה" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -286,7 +286,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:text="חבר בתנועת נוער" />
+                    android:hint="חבר בתנועת נוער" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -305,10 +305,10 @@
                 <EditText
                     android:id="@+id/comments"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
+                    android:layout_height="140dp"
                     android:ems="10"
                     android:inputType="textMultiLine|text"
-                    android:text="הערות" />
+                    android:hint="הערות" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -378,6 +378,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:onClick="saveData"
                 android:text="save" />
 
             <Space
