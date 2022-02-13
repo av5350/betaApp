@@ -94,11 +94,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <Spinner
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/wantedClass"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="קופת חולים">
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Space
                     android:layout_width="match_parent"

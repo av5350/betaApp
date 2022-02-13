@@ -15,6 +15,8 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Adapter;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Spinner;
@@ -23,6 +25,8 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.material.textfield.MaterialAutoCompleteTextView;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
 
@@ -67,7 +71,8 @@ public class FormActivity extends AppCompatActivity {
     neighborhood, zipCode, studentPhone, homePhone,
     birthDate, birthDateHebrew, studentMail, birthCountry, aliyaDate, tnuatNoar, comments;
 
-    Spinner currentSchool,wantedClass, kupatHolim, maslul;
+    TextInputLayout wantedClass;
+    Spinner currentSchool, kupatHolim, maslul;
 
     HashMap<String, String> data;
 
@@ -76,6 +81,11 @@ public class FormActivity extends AppCompatActivity {
     HashMap<Integer, String> editTextsID = new HashMap<>();
 
     Spinner[] spinners;
+
+    String[] kupatHolimList = new String[]{"מכבי", "מאוחדת", "כללית", "לאומית"};
+    String[] currentSchoolList = new String[]{"בית ספר 1", "בית ספר 2", "בית ספר 3", "בית ספר 4"};
+    String[] wantedClassList = new String[]{"ז", "ח", "ט", "י"};
+    String[] maslulClassList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,7 +96,7 @@ public class FormActivity extends AppCompatActivity {
 
         firstName = (EditText) findViewById(R.id.firstName);
         lastName = (EditText) findViewById(R.id.lastName);
-        wantedClass = (Spinner) findViewById(R.id.wantedClass);
+        //wantedClass = (Spinner) findViewById(R.id.wantedClass);
         city = (EditText) findViewById(R.id.city);
         street = (EditText) findViewById(R.id.street);
         addressNumber = (EditText) findViewById(R.id.addressNumber);
@@ -105,6 +115,12 @@ public class FormActivity extends AppCompatActivity {
         tnuatNoar = (EditText) findViewById(R.id.tnuatNoar);
         maslul = (Spinner) findViewById(R.id.maslul);
         comments = (EditText) findViewById(R.id.comments);
+
+
+        wantedClass = (TextInputLayout) findViewById(R.id.wantedClass);
+
+        ArrayAdapter<String> adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, wantedClassList);
+        ((MaterialAutoCompleteTextView) wantedClass.getEditText()).setAdapter(adp);
 
         editTexts = new EditText[]{firstName, lastName, city,
                 street, addressNumber, homeNumber,
@@ -133,7 +149,7 @@ public class FormActivity extends AppCompatActivity {
         editTextsID.put(R.id.maslul, "maslul");
         editTextsID.put(R.id.comments, "comments");
 
-        spinners = new Spinner[]{currentSchool, wantedClass, kupatHolim, maslul};
+        //spinners = new Spinner[]{currentSchool, wantedClass, kupatHolim, maslul};
 
         Intent gi = getIntent();
 
@@ -165,10 +181,10 @@ public class FormActivity extends AppCompatActivity {
                 }, 1
         );
 
-        xml(gi.getStringExtra("id"));
+        get_xml(gi.getStringExtra("id"));
     }
 
-    public void xml(String studentId)
+    public void get_xml(String studentId)
     {
         if (new File(studentFormPath).exists()) {
             XmlHelper.init(studentFormPath);
