@@ -71,21 +71,20 @@ public class FormActivity extends AppCompatActivity {
     neighborhood, zipCode, studentPhone, homePhone,
     birthDate, birthDateHebrew, studentMail, birthCountry, aliyaDate, tnuatNoar, comments;
 
-    TextInputLayout wantedClass;
-    Spinner currentSchool, kupatHolim, maslul;
+    TextInputLayout wantedClass, currentSchool, kupatHolim, maslul;
 
     HashMap<String, String> data;
 
     EditText[] editTexts;
 
-    HashMap<Integer, String> editTextsID = new HashMap<>();
+    HashMap<Integer, String> ids = new HashMap<>();
 
-    Spinner[] spinners;
+    TextInputLayout[] spinners;
 
     String[] kupatHolimList = new String[]{"מכבי", "מאוחדת", "כללית", "לאומית"};
     String[] currentSchoolList = new String[]{"בית ספר 1", "בית ספר 2", "בית ספר 3", "בית ספר 4"};
     String[] wantedClassList = new String[]{"ז", "ח", "ט", "י"};
-    String[] maslulClassList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
+    String[] maslulList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +95,6 @@ public class FormActivity extends AppCompatActivity {
 
         firstName = (EditText) findViewById(R.id.firstName);
         lastName = (EditText) findViewById(R.id.lastName);
-        //wantedClass = (Spinner) findViewById(R.id.wantedClass);
         city = (EditText) findViewById(R.id.city);
         street = (EditText) findViewById(R.id.street);
         addressNumber = (EditText) findViewById(R.id.addressNumber);
@@ -107,13 +105,13 @@ public class FormActivity extends AppCompatActivity {
         homePhone = (EditText) findViewById(R.id.homePhone);
         birthDate = (EditText) findViewById(R.id.birthDate);
         birthDateHebrew = (EditText) findViewById(R.id.birthDateHebrew);
-        currentSchool = (Spinner) findViewById(R.id.currentSchool);
+        currentSchool = (TextInputLayout) findViewById(R.id.currentSchool);
         studentMail = (EditText) findViewById(R.id.studentMail);
-        kupatHolim = (Spinner) findViewById(R.id.kupatHolim);
+        kupatHolim = (TextInputLayout) findViewById(R.id.kupatHolim);
         birthCountry = (EditText) findViewById(R.id.birthCountry);
         aliyaDate = (EditText) findViewById(R.id.aliyaDate);
         tnuatNoar = (EditText) findViewById(R.id.tnuatNoar);
-        maslul = (Spinner) findViewById(R.id.maslul);
+        maslul = (TextInputLayout) findViewById(R.id.maslul);
         comments = (EditText) findViewById(R.id.comments);
 
 
@@ -122,34 +120,43 @@ public class FormActivity extends AppCompatActivity {
         ArrayAdapter<String> adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, wantedClassList);
         ((MaterialAutoCompleteTextView) wantedClass.getEditText()).setAdapter(adp);
 
+        adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, currentSchoolList);
+        ((MaterialAutoCompleteTextView) currentSchool.getEditText()).setAdapter(adp);
+
+        adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, kupatHolimList);
+        ((MaterialAutoCompleteTextView) kupatHolim.getEditText()).setAdapter(adp);
+
+        adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, maslulList);
+        ((MaterialAutoCompleteTextView) maslul.getEditText()).setAdapter(adp);
+
         editTexts = new EditText[]{firstName, lastName, city,
                 street, addressNumber, homeNumber,
                 neighborhood, zipCode, studentPhone, homePhone,
                 birthDate, birthDateHebrew, studentMail, birthCountry, aliyaDate, tnuatNoar, comments};
 
-        editTextsID.put(R.id.firstName, "firstName");
-        editTextsID.put(R.id.lastName, "lastName");
-        editTextsID.put(R.id.wantedClass, "wantedClass");
-        editTextsID.put(R.id.city, "city");
-        editTextsID.put(R.id.street, "street");
-        editTextsID.put(R.id.addressNumber, "addressNumber");
-        editTextsID.put(R.id.homeNumber, "homeNumber");
-        editTextsID.put(R.id.neighborhood, "neighborhood");
-        editTextsID.put(R.id.zipCode, "zipCode");
-        editTextsID.put(R.id.studentPhone, "studentPhone");
-        editTextsID.put(R.id.homePhone, "homePhone");
-        editTextsID.put(R.id.birthDate, "birthDate");
-        editTextsID.put(R.id.birthDateHebrew, "birthDateHebrew");
-        editTextsID.put(R.id.currentSchool, "currentSchool");
-        editTextsID.put(R.id.studentMail, "studentMail");
-        editTextsID.put(R.id.kupatHolim, "kupatHolim");
-        editTextsID.put(R.id.birthCountry, "birthCountry");
-        editTextsID.put(R.id.aliyaDate, "aliyaDate");
-        editTextsID.put(R.id.tnuatNoar, "tnuatNoar");
-        editTextsID.put(R.id.maslul, "maslul");
-        editTextsID.put(R.id.comments, "comments");
+        spinners = new TextInputLayout[]{wantedClass, currentSchool, kupatHolim, maslul};
 
-        //spinners = new Spinner[]{currentSchool, wantedClass, kupatHolim, maslul};
+        ids.put(R.id.firstName, "firstName");
+        ids.put(R.id.lastName, "lastName");
+        ids.put(R.id.wantedClass, "wantedClass");
+        ids.put(R.id.city, "city");
+        ids.put(R.id.street, "street");
+        ids.put(R.id.addressNumber, "addressNumber");
+        ids.put(R.id.homeNumber, "homeNumber");
+        ids.put(R.id.neighborhood, "neighborhood");
+        ids.put(R.id.zipCode, "zipCode");
+        ids.put(R.id.studentPhone, "studentPhone");
+        ids.put(R.id.homePhone, "homePhone");
+        ids.put(R.id.birthDate, "birthDate");
+        ids.put(R.id.birthDateHebrew, "birthDateHebrew");
+        ids.put(R.id.currentSchool, "currentSchool");
+        ids.put(R.id.studentMail, "studentMail");
+        ids.put(R.id.kupatHolim, "kupatHolim");
+        ids.put(R.id.birthCountry, "birthCountry");
+        ids.put(R.id.aliyaDate, "aliyaDate");
+        ids.put(R.id.tnuatNoar, "tnuatNoar");
+        ids.put(R.id.maslul, "maslul");
+        ids.put(R.id.comments, "comments");
 
         Intent gi = getIntent();
 
@@ -299,7 +306,13 @@ public class FormActivity extends AppCompatActivity {
     {
         for (int index = 0; index < editTexts.length; index++)
         {
-            editTexts[index].setText(data.get(editTextsID.get(editTexts[index].getId())));
+            editTexts[index].setText(data.get(ids.get(editTexts[index].getId())));
+        }
+
+        // put all the spinners data
+        for (int index = 0; index < spinners.length; index++)
+        {
+            ((MaterialAutoCompleteTextView) spinners[index].getEditText()).setText(data.get(ids.get(spinners[index].getId())), false);
         }
     }
 
@@ -321,21 +334,24 @@ public class FormActivity extends AppCompatActivity {
         String typedText = "";
 
         // save all the editTexts
-        for (int index = 0; index < editTexts.length; index++)
-        {
-            if (editTexts[index].getText() == null)
+        for (EditText editText : editTexts) {
+            if (editText.getText() == null)
                 typedText = "";
             else
-                typedText = editTexts[index].getText().toString();
+                typedText = editText.getText().toString();
 
-            data.put(editTextsID.get(editTexts[index].getId()), typedText);
+            data.put(ids.get(editText.getId()), typedText);
         }
 
-        // todo: צריך לעבוד על זה....
-        data.put("currentSchool", "");
-        data.put("wantedClass", "");
-        data.put("kupatHolim", "");
-        data.put("maslul", "");
+        // save all the spinners (TextInputLayout)
+        for (TextInputLayout spinner : spinners) {
+            if (spinner.getEditText().getText() == null)
+                typedText = "";
+            else
+                typedText = spinner.getEditText().getText().toString();
+
+            data.put(ids.get(spinner.getId()), typedText);
+        }
 
         XmlHelper.pushData(data, studentFormPath);
     }

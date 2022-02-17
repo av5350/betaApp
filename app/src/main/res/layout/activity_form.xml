@@ -99,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:hint="קופת חולים">
+                    android:hint="רישום לכיתה">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
@@ -231,11 +231,19 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <Spinner
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/currentSchool"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="בית ספר נוכחי">
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+
 
                 <Space
                     android:layout_width="match_parent"
@@ -253,11 +261,20 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <Spinner
+
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/kupatHolim"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="קופת חולים">
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
+
 
                 <Space
                     android:layout_width="match_parent"
@@ -299,11 +316,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <Spinner
+                <com.google.android.material.textfield.TextInputLayout
                     android:id="@+id/maslul"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    tools:ignore="SpeakableTextPresentCheck" />
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:hint="מסלול">
+
+                    <AutoCompleteTextView
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        android:inputType="none" />
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <Space
                     android:layout_width="match_parent"
