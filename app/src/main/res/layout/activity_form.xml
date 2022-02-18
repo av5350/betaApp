@@ -64,7 +64,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:hint="שם פרטי" />
+                    android:hint="@string/first_name_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -76,7 +76,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:hint="שם משפחה" />
+                    android:hint="@string/last_name_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -87,7 +87,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:gravity="center|right"
-                    android:text="TextView"
+                    android:text="תז"
                     android:textSize="16sp" />
 
                 <Space
@@ -99,7 +99,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:hint="רישום לכיתה">
+                    android:hint="@string/wanted_class_hint">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
@@ -117,7 +117,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:hint="יישוב" />
+                    android:hint="@string/city_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -129,7 +129,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="textPersonName"
-                    android:hint="רחוב" />
+                    android:hint="@string/street_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -140,8 +140,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="textPersonName"
-                    android:hint="מספר הבית" />
+                    android:inputType="numberPassword"
+                    android:hint="@string/address_number_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -152,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="textPersonName"
+                    android:inputType="numberPassword"
                     android:hint="מספר הדירה" />
 
                 <Space
@@ -176,8 +176,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="textPersonName"
-                    android:hint="מיקוד" />
+                    android:inputType="numberPassword"
+                    android:hint="@string/zip_code_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -188,7 +188,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="textPersonName"
+                    android:inputType="numberPassword"
                     android:hint="טלפון נייד (תלמיד)" />
 
                 <Space
@@ -200,7 +200,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="textPersonName"
+                    android:inputType="numberPassword"
                     android:hint="טלפון בבית" />
 
                 <Space
@@ -213,7 +213,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="date"
-                    android:hint="תאריך לידה לועזי" />
+                    android:hint="@string/birth_date_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -225,7 +225,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="date"
-                    android:hint="תאריך לידה עברי" />
+                    android:hint="@string/birth_date_hebrew_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -236,7 +236,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:hint="בית ספר נוכחי">
+                    android:hint="@string/current_school_hint">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
@@ -254,7 +254,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:inputType="text"
+                    android:inputType="textEmailAddress"
                     android:hint='דוא"ל (תלמיד)' />
 
                 <Space
@@ -267,7 +267,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:hint="קופת חולים">
+                    android:hint="@string/kupat_holim_hint">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
@@ -286,7 +286,7 @@
                     android:layout_height="70dp"
                     android:ems="10"
                     android:inputType="text"
-                    android:hint="ארץ לידה" />
+                    android:hint="@string/birth_country_hint" />
 
                 <Space
                     android:layout_width="match_parent"
@@ -321,7 +321,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:hint="מסלול">
+                    android:hint="@string/maslul_hint">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"

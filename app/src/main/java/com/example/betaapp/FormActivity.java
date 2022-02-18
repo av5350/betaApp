@@ -10,8 +10,10 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -57,7 +59,11 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
+
+import org.apache.commons.validator.routines.EmailValidator;
 
 public class FormActivity extends AppCompatActivity {
     int progress = 0;
@@ -175,6 +181,13 @@ public class FormActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // all the numeric fields accepts just numbers
+        addressNumber.setTransformationMethod(null);
+        homeNumber.setTransformationMethod(null);
+        zipCode.setTransformationMethod(null);
+        homePhone.setTransformationMethod(null);
+        studentPhone.setTransformationMethod(null);
 
 
         if (ContextCompat.checkSelfPermission(FormActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
@@ -333,26 +346,98 @@ public class FormActivity extends AppCompatActivity {
     public void saveData(View view) {
         String typedText = "";
 
-        // save all the editTexts
-        for (EditText editText : editTexts) {
-            if (editText.getText() == null)
-                typedText = "";
-            else
-                typedText = editText.getText().toString();
+        if (checkFields()) {
+            // save all the editTexts
+            for (EditText editText : editTexts) {
+                if (editText.getText() == null)
+                    typedText = "";
+                else
+                    typedText = editText.getText().toString();
 
-            data.put(ids.get(editText.getId()), typedText);
+                data.put(ids.get(editText.getId()), typedText);
+            }
+
+            // save all the spinners (TextInputLayout)
+            for (TextInputLayout spinner : spinners) {
+                if (spinner.getEditText().getText() == null)
+                    typedText = "";
+                else
+                    typedText = spinner.getEditText().getText().toString();
+
+                data.put(ids.get(spinner.getId()), typedText);
+            }
+
+            XmlHelper.pushData(data, studentFormPath);
+        }
+    }
+
+    private boolean checkFields()
+    {
+        boolean isGood = false;
+
+        // check non empty fields and that fields are in hebrew
+        if ((!isEmpty(firstName, null) && !isEmpty(lastName, null) && !isEmpty(city, null)
+                && !isEmpty(street, null) && !isEmpty(addressNumber, null)
+                && !isEmpty(zipCode, null) && !isEmpty(wantedClass.getEditText(), wantedClass)
+                && !isEmpty(currentSchool.getEditText(), currentSchool) && !isEmpty(kupatHolim.getEditText(), kupatHolim)
+                && !isEmpty(maslul.getEditText(), maslul))
+            && (isHebrew(firstName) && isHebrew(lastName) && isHebrew(city) && isHebrew(street)
+                && isHebrew(neighborhood) && isHebrew(birthDateHebrew) && isHebrew(birthCountry)
+                && isHebrew(tnuatNoar) && isHebrew(comments)))
+        {
+            // check mail format ("" is acceptable)
+            if (!(studentMail.getText().toString().isEmpty() || EmailValidator.getInstance().isValid(studentMail.getText().toString())))
+            {
+                studentMail.setError("כתובת מייל לא תקינה!");
+            }
+            else
+            {
+                isGood = true;
+            }
+
         }
 
-        // save all the spinners (TextInputLayout)
-        for (TextInputLayout spinner : spinners) {
-            if (spinner.getEditText().getText() == null)
-                typedText = "";
-            else
-                typedText = spinner.getEditText().getText().toString();
+        return isGood;
+    }
 
-            data.put(ids.get(spinner.getId()), typedText);
+    private boolean isEmpty(EditText et, TextInputLayout layout)
+    {
+        boolean isEmpty = false;
+        String text = et.getText().toString();
+
+        if(TextUtils.isEmpty(text)) {
+            if (layout == null) {
+                et.setError("לא יכול להיות ריק");
+                et.requestFocus();
+            }
+            else
+            {
+                layout.setErrorEnabled(true);
+                layout.requestFocus();
+            }
+            isEmpty = true;
         }
 
-        XmlHelper.pushData(data, studentFormPath);
+        return isEmpty;
+    }
+
+    private boolean isHebrew(EditText et)
+    {
+        boolean matchFound = true; // if text is "" its still good
+        String text = et.getText().toString();
+
+        if (!text.isEmpty()) {
+            // א-ת and '
+            Pattern pattern = Pattern.compile("^[\u0590-\u05FF \" ’ ']+$");
+            Matcher matcher = pattern.matcher(et.getText().toString());
+
+            matchFound = matcher.find();
+
+            if (!matchFound) {
+                et.setError("חובה להיות בעברית");
+            }
+        }
+
+        return matchFound;
     }
 }

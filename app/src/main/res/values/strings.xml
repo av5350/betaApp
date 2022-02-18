@@ -1,5 +1,17 @@
 <resources>
     <string name="app_name">betaApp</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="wanted_class_hint">רישום לכיתה <font color='#FF0000'>*</font></string>
+    <string name="first_name_hint">שם פרטי <font color='#FF0000'>*</font></string>
+    <string name="last_name_hint">שם משפחה <font color='#FF0000'>*</font></string>
+    <string name="city_hint">יישוב <font color='#FF0000'>*</font></string>
+    <string name="street_hint">רחוב <font color='#FF0000'>*</font></string>
+    <string name="address_number_hint">מספר הבית <font color='#FF0000'>*</font></string>
+    <string name="zip_code_hint">מיקוד <font color='#FF0000'>*</font></string>
+    <string name="birth_date_hint">תאריך לידה לועזי <font color='#FF0000'>*</font></string>
+    <string name="birth_date_hebrew_hint">תאריך לידה עברי <font color='#FF0000'>*</font></string>
+    <string name="current_school_hint">בית ספר נוכחי <font color='#FF0000'>*</font></string>
+    <string name="kupat_holim_hint">קופת חולים <font color='#FF0000'>*</font></string>
+    <string name="birth_country_hint">ארץ לידה <font color='#FF0000'>*</font></string>
+    <string name="maslul_hint">מסלול <font color='#FF0000'>*</font></string>
+
 </resources>
