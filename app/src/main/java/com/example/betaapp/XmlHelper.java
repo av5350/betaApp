@@ -1,7 +1,14 @@
 package com.example.betaapp;
 
+import android.net.Uri;
 import android.os.Environment;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.UploadTask;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -26,9 +33,13 @@ public class XmlHelper {
     private static Document doc;
     private static Element root;
 
-    public static boolean init(String xmlPath)
+    private static boolean isFirstActivity; // which activity start the init (in first activity we need to save the xml name is database)
+
+    public static boolean init(String xmlPath, boolean firstActivity)
     {
         boolean goodInit = false;
+
+        isFirstActivity = firstActivity;
 
         // Instantiate the Factory
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -57,7 +68,9 @@ public class XmlHelper {
         return goodInit;
     }
 
-    public static void pushData(HashMap<String, String> data, String destPath)
+    // finish yer - the year that student will finish school
+
+    public static void pushData(HashMap<String, String> data, String destPath, String finishYear)
     {
         // replace the elements in the xml file
         for (Map.Entry<String, String> mapElement : data.entrySet()) {
@@ -74,6 +87,8 @@ public class XmlHelper {
 
             File outputFile = new File(destPath);
             transformer.transform(source, new StreamResult(outputFile));
+
+            uploadFileToFirebase(destPath, finishYear);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -92,7 +107,7 @@ public class XmlHelper {
             // don't get the '\n' or '\t' nodes
             if (node.getNodeType() == Node.ELEMENT_NODE)
             {
-                //Print each question's detail
+                // each question's detail
                 Element element = (Element) node;
 
                 value = "";
@@ -106,5 +121,33 @@ public class XmlHelper {
         }
 
         return data;
+    }
+
+    private static void uploadFileToFirebase(String filePath, String finishYear)
+    {
+        Uri file = Uri.fromFile(new File(filePath));
+        UploadTask uploadTask = FBref.storageRef.child("/forms").child(finishYear).child(file.getLastPathSegment()).putFile(file);
+
+        // Register observers to listen for when the download is done or if it fails
+        uploadTask.addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // Handle unsuccessful uploads
+            }
+        }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
+                // ...
+
+                if (isFirstActivity)
+                {
+                    // update the registrationFormID path link (in the student in firebase)
+                    FBref.refStudents.child(file.getLastPathSegment().split("\\.")[0]).child("registrationFormID").setValue(finishYear + "/" + file.getLastPathSegment());
+
+                    isFirstActivity = false;
+                }
+            }
+        });
     }
 }
