@@ -35,6 +35,9 @@ import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.StorageReference;
 
@@ -64,6 +67,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -75,7 +79,6 @@ import java.util.stream.Stream;
 import org.apache.commons.validator.routines.EmailValidator;
 
 public class FormActivity extends AppCompatActivity {
-    int progress = 0;
     SeekBar seekbarState;
 
     String studentFormPath;
@@ -182,6 +185,7 @@ public class FormActivity extends AppCompatActivity {
         id.setText(gi.getStringExtra("id"));
 
         studentFormPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + gi.getStringExtra("id") + ".xml";
+        Helper.studentFormDestPath = studentFormPath;
 
         seekbarState = (SeekBar) findViewById(R.id.seekbarState);
 
@@ -215,25 +219,34 @@ public class FormActivity extends AppCompatActivity {
 
         initDatePicker(birthDate);
         initDatePicker(aliyaDate);
-        get_xml();
+        get_xml(gi.getStringExtra("id"));
     }
 
-    public void get_xml()
+    public void get_xml(String studentID)
     {
         if (new File(studentFormPath).exists()) {
-
-            // todo: move to another activity
-
             XmlHelper.init(studentFormPath, true);
-            data = XmlHelper.getData();
+            data = XmlHelper.getData(new ArrayList<String>(ids.values()));
             initUI();
+
+            // get the finishYear of the student
+            FBref.refStudents.child(studentID).child("finishYear").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dS) {
+                    Helper.studentFinishYear = dS.getValue(String.class);
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
         }
         else
         {
             // init the XmlHelper with the temp xml path we downloaded
             String tempPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/student_tempXML.xml";
             XmlHelper.init(tempPath, true);
-            data = XmlHelper.getData();
+            data = XmlHelper.getData(new ArrayList<String>(ids.values()));
         }
     }
 
@@ -255,20 +268,6 @@ public class FormActivity extends AppCompatActivity {
         {
             textViews[index].setText(data.get(ids.get(textViews[index].getId())));
         }
-    }
-
-    public void prevFragment(View view) {
-        if (progress > 0) {
-            progress--;
-        }
-        seekbarState.setProgress(progress);
-    }
-
-    public void nextFragment(View view) {
-        if (progress < 6) {
-            progress++;
-        }
-        seekbarState.setProgress(progress);
     }
 
     public void saveData(View view) {
@@ -307,7 +306,18 @@ public class FormActivity extends AppCompatActivity {
                         data.put(ids.get(textView.getId()), typedText);
                     }
 
-                    XmlHelper.pushData(data, studentFormPath, getEndYear());
+                    // if the variable wasnt initialized yet (first time)
+                    if (Helper.studentFinishYear.equals(""))
+                        Helper.studentFinishYear = getEndYear();
+
+                    XmlHelper.pushData(data);
+
+                    // if want to move page
+                    if (view.getTag().equals("move"))
+                    {
+                        Intent si = new Intent(FormActivity.this, FormStudConfirmActivity.class);
+                        startActivity(si);
+                    }
                 }
             });
 
@@ -429,5 +439,12 @@ public class FormActivity extends AppCompatActivity {
                     }
                 });
 
+    }
+
+
+    public void nextPage(View view) {
+        // if we want to move a page, first try to save the curr data
+        // this view has parameter of tag - so we know to move page
+        saveData(view);
     }
 }

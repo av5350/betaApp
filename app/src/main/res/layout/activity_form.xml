@@ -38,15 +38,18 @@
             android:layout_weight="0.5" />
 
         <TextView
-            android:id="@+id/studentId"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="stam text" />
+            android:shadowColor="#000000"
+            android:shadowRadius="8"
+            android:text="פרטי התלמיד/ה"
+            android:textSize="24sp"
+            android:textStyle="bold" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.5" />
+            android:layout_weight="0.2" />
 
         <ScrollView
             android:layout_width="match_parent"
@@ -366,7 +369,6 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
-                android:onClick="prevFragment"
                 android:text="prev" />
 
             <Space
@@ -378,7 +380,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
-                android:onClick="nextFragment"
+                android:onClick="nextPage"
+                android:tag="move"
                 android:text="next" />
 
             <Space
@@ -408,6 +411,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="5"
                 android:onClick="saveData"
+                android:tag="stay"
                 android:text="save" />
 
             <Space

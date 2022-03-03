@@ -16,6 +16,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -70,7 +71,7 @@ public class XmlHelper {
 
     // finish yer - the year that student will finish school
 
-    public static void pushData(HashMap<String, String> data, String destPath, String finishYear)
+    public static void pushData(HashMap<String, String> data)
     {
         // replace the elements in the xml file
         for (Map.Entry<String, String> mapElement : data.entrySet()) {
@@ -85,16 +86,16 @@ public class XmlHelper {
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             DOMSource source = new DOMSource(doc);
 
-            File outputFile = new File(destPath);
+            File outputFile = new File(Helper.studentFormDestPath);
             transformer.transform(source, new StreamResult(outputFile));
 
-            uploadFileToFirebase(destPath, finishYear);
+            uploadFileToFirebase();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public static HashMap<String, String> getData()
+    public static HashMap<String, String> getData(ArrayList<String> wantedTags)
     {
         HashMap<String, String> data = new HashMap<>();
         String value = "";
@@ -110,23 +111,26 @@ public class XmlHelper {
                 // each question's detail
                 Element element = (Element) node;
 
-                value = "";
-                if (element.hasChildNodes())
+                if (wantedTags.contains(element.getTagName()))
                 {
-                    value = element.getChildNodes().item(0).getTextContent();
-                }
+                    value = "";
+                    if (element.hasChildNodes())
+                    {
+                        value = element.getChildNodes().item(0).getTextContent();
+                    }
 
-                data.put(node.getNodeName(), value);
+                    data.put(node.getNodeName(), value);
+                }
             }
         }
 
         return data;
     }
 
-    private static void uploadFileToFirebase(String filePath, String finishYear)
+    private static void uploadFileToFirebase()
     {
-        Uri file = Uri.fromFile(new File(filePath));
-        UploadTask uploadTask = FBref.storageRef.child("/forms").child(finishYear).child(file.getLastPathSegment()).putFile(file);
+        Uri file = Uri.fromFile(new File(Helper.studentFormDestPath));
+        UploadTask uploadTask = FBref.storageRef.child("/forms").child(Helper.studentFinishYear).child(file.getLastPathSegment()).putFile(file);
 
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -143,7 +147,8 @@ public class XmlHelper {
                 if (isFirstActivity)
                 {
                     // update the registrationFormID path link (in the student in firebase)
-                    FBref.refStudents.child(file.getLastPathSegment().split("\\.")[0]).child("registrationFormID").setValue(finishYear + "/" + file.getLastPathSegment());
+                    FBref.refStudents.child(file.getLastPathSegment().split("\\.")[0]).child("registrationFormID").setValue(Helper.studentFinishYear + "/" + file.getLastPathSegment());
+                    FBref.refStudents.child(file.getLastPathSegment().split("\\.")[0]).child("finishYear").setValue(Helper.studentFinishYear);
 
                     isFirstActivity = false;
                 }
