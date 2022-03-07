@@ -14,4 +14,9 @@
     <string name="birth_country_hint">ארץ לידה <font color='#FF0000'>*</font></string>
     <string name="maslul_hint">מסלול <font color='#FF0000'>*</font></string>
 
+    <string name="confirm_pictures"><font color='#FF0000'>*</font>הריני לאשר בזאת פרסום של תמונות, סרטונים ומדיה דיגיטלית בהם בני מצולם.\n תמונות, סרטונים, מדיה דיגיטלית אלו יכולים להיות מפורסמים באתר\פייסבוק של אמי"ת באר שבע ובפרסומים נוספים מטעמם. הפרסום לא יכלול את פרטיו האישיים כגון: כתובת מגורים\מספר טלפון\ מידע אודות מצבה הכלכלי\לימודי. </string>
+    <string name="confirm_contact"><font color='#FF0000'>*</font>"אנו מאשרים למוסד ליצור קשר עם המחנך/ת / יועץ/ת על מנת לקבל המלצה בעל פה </string>
+
+    <string name="number_of_brothers">מספר אחים ואחיות (לא כולל התלמיד) <font color='#FF0000'>*</font></string>
+
 </resources>

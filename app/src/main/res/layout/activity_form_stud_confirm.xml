@@ -51,12 +51,22 @@
             android:layout_height="0dp"
             android:layout_weight="0.2" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="אם יש אבחון, יש למסור אותו בהמשך לבית הספר." />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.2" />
+
         <CheckBox
             android:id="@+id/checkbox_meat"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.7"
-            android:text="משהו משהו" />
+            android:text="@string/confirm_contact" />
 
         <Space
             android:layout_width="match_parent"
@@ -67,13 +77,13 @@
             android:id="@+id/checkbox_cheese"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.7"
-            android:text="סתם סתם" />
+            android:layout_weight="2.5"
+            android:text="@string/confirm_pictures" />
 
         <Space
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="0.5" />
 
         <TextView
             android:id="@+id/textView"
@@ -89,6 +99,14 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="0.2" />
+
+        <EditText
+            android:id="@+id/numberBrothers"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:ems="10"
+            android:inputType="numberPassword"
+            android:hint="@string/number_of_brothers" />
 
         <Space
             android:layout_width="match_parent"
