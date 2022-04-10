@@ -313,6 +313,7 @@ public class FormActivity extends AppCompatActivity {
                     XmlHelper.pushData(data);
 
                     // if want to move page
+                    // this view has parameter of tag - so we know to move page
                     if (view.getTag().equals("move"))
                     {
                         Intent si = new Intent(FormActivity.this, FormStudConfirmActivity.class);
@@ -439,12 +440,5 @@ public class FormActivity extends AppCompatActivity {
                     }
                 });
 
-    }
-
-
-    public void nextPage(View view) {
-        // if we want to move a page, first try to save the curr data
-        // this view has parameter of tag - so we know to move page
-        saveData(view);
     }
 }

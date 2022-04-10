@@ -380,7 +380,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
-                android:onClick="nextPage"
+                android:onClick="saveData"
                 android:tag="move"
                 android:text="next" />
 

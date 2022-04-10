@@ -39,7 +39,8 @@
 
         <TextView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:shadowColor="#000000"
             android:shadowRadius="8"
             android:text="אישור"
@@ -62,10 +63,10 @@
             android:layout_weight="0.2" />
 
         <CheckBox
-            android:id="@+id/checkbox_meat"
+            android:id="@+id/checkboxAgreeContact"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="0.7"
+            android:layout_weight="1"
             android:text="@string/confirm_contact" />
 
         <Space
@@ -74,10 +75,10 @@
             android:layout_weight="0.2" />
 
         <CheckBox
-            android:id="@+id/checkbox_cheese"
+            android:id="@+id/checkboxShareVideo"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2.5"
+            android:layout_weight="4"
             android:text="@string/confirm_pictures" />
 
         <Space
@@ -88,7 +89,8 @@
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
             android:shadowColor="#000000"
             android:shadowRadius="8"
             android:text="אחים ואחיות"
@@ -103,10 +105,12 @@
         <EditText
             android:id="@+id/numberBrothers"
             android:layout_width="match_parent"
-            android:layout_height="70dp"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:ems="10"
-            android:inputType="numberPassword"
-            android:hint="@string/number_of_brothers" />
+            android:gravity="right"
+            android:hint="@string/number_of_brothers"
+            android:inputType="numberPassword" />
 
         <Space
             android:layout_width="match_parent"
@@ -128,6 +132,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:onClick="back"
                 android:text="prev" />
 
             <Space
@@ -139,6 +144,8 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:tag="move"
+                android:onClick="saveData"
                 android:text="next" />
 
             <Space
@@ -168,6 +175,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="5"
                 android:onClick="saveData"
+                android:tag="stay"
                 android:text="save" />
 
             <Space
