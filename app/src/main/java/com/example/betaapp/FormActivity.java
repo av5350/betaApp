@@ -268,6 +268,9 @@ public class FormActivity extends AppCompatActivity {
         {
             textViews[index].setText(data.get(ids.get(textViews[index].getId())));
         }
+
+        // the user cannot change its birth date after saving first part of form
+        birthDate.setClickable(false);
     }
 
     public void saveData(View view) {
@@ -310,6 +313,9 @@ public class FormActivity extends AppCompatActivity {
                     if (Helper.studentFinishYear.equals(""))
                         Helper.studentFinishYear = getEndYear();
 
+                    // cannot edit the birthdate anymore
+                    birthDate.setClickable(false);
+
                     XmlHelper.pushData(data);
 
                     // if want to move page
@@ -344,14 +350,15 @@ public class FormActivity extends AppCompatActivity {
         boolean isGood = false;
 
         // check non empty fields and that fields are in hebrew
+        // and check that the user entered birthdate
         if ((!isEmpty(firstName, null) && !isEmpty(lastName, null) && !isEmpty(city, null)
                 && !isEmpty(street, null) && !isEmpty(addressNumber, null)
-                && !isEmpty(zipCode, null) && !isEmpty(wantedClass.getEditText(), wantedClass)
+                && !isEmpty(zipCode, null) && !isEmpty(birthCountry, null) && !isEmpty(wantedClass.getEditText(), wantedClass)
                 && !isEmpty(currentSchool.getEditText(), currentSchool) && !isEmpty(kupatHolim.getEditText(), kupatHolim)
                 && !isEmpty(maslul.getEditText(), maslul))
             && (isHebrew(firstName) && isHebrew(lastName) && isHebrew(city) && isHebrew(street)
                 && isHebrew(neighborhood) && isHebrew(birthDateHebrew) && isHebrew(birthCountry)
-                && isHebrew(tnuatNoar) && isHebrew(comments)))
+                && isHebrew(tnuatNoar) && isHebrew(comments)) && (!birthDate.getText().toString().equals("")))
         {
             // check mail format ("" is acceptable)
             if (!(studentMail.getText().toString().isEmpty() || EmailValidator.getInstance().isValid(studentMail.getText().toString())))
