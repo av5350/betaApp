@@ -19,4 +19,17 @@
 
     <string name="number_of_brothers">מספר אחים ואחיות (לא כולל התלמיד) <font color='#FF0000'>*</font></string>
 
+    <string name="last_year_certificate_A"><font color='#FF0000'>*</font>תעודת מחצית א\' של שנה שעברה</string>
+    <string name="last_year_certificate_B"><font color='#FF0000'>*</font>תעודת מחצית ב\' של שנה שעברה</string>
+    <string name="two_year_certificate_B"><font color='#FF0000'>*</font>תעודת מחצית ב\' מלפני שנתיים</string>
+    <string name="parant_id"><font color='#FF0000'>*</font>צילום ת.ז + ספח של אחד ההורים</string>
+    <string name="student_picture"><font color='#FF0000'>*</font>תצלום פני התלמיד (פורמט פספורט) עדכנית</string>
+    <string name="more_files">קובץ נוסף / הערכה / משהו אחר</string>
+
+    <string name="marital_status">מצב משפחתי <font color='#FF0000'>*</font></string>
+    <string name="id">תעודת זהות <font color='#FF0000'>*</font></string>
+    <string name="parent_profession">מקצוע <font color='#FF0000'>*</font></string>
+    <string name="education_years">מספר שנות לימוד <font color='#FF0000'>*</font></string>
+    <string name="phone">טלפון נייד <font color='#FF0000'>*</font></string>
+    <string name="email">דואר אלקטרוני <font color='#FF0000'>*</font></string>
 </resources>

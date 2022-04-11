@@ -14,6 +14,12 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.BetaApp">
         <activity
+            android:name=".FormParentsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FormFilesActivity"
+            android:exported="false" />
+        <activity
             android:name=".FormStudConfirmActivity"
             android:exported="false" />
         <activity

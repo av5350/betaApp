@@ -1,5 +1,9 @@
 package com.example.betaapp;
 
+import static com.example.betaapp.Helper.initDatePicker;
+import static com.example.betaapp.Helper.isEmpty;
+import static com.example.betaapp.Helper.isHebrew;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -217,8 +221,8 @@ public class FormActivity extends AppCompatActivity {
                 }, 1
         );
 
-        initDatePicker(birthDate);
-        initDatePicker(aliyaDate);
+        initDatePicker(birthDate, getSupportFragmentManager());
+        initDatePicker(aliyaDate, getSupportFragmentManager());
         get_xml(gi.getStringExtra("id"));
     }
 
@@ -375,77 +379,7 @@ public class FormActivity extends AppCompatActivity {
         return isGood;
     }
 
-    private boolean isEmpty(EditText et, TextInputLayout layout)
-    {
-        boolean isEmpty = false;
-        String text = et.getText().toString();
 
-        if(TextUtils.isEmpty(text)) {
-            if (layout == null) {
-                et.setError("לא יכול להיות ריק");
-                et.requestFocus();
-            }
-            else
-            {
-                layout.setErrorEnabled(true);
-                layout.requestFocus();
-            }
-            isEmpty = true;
-        }
 
-        return isEmpty;
-    }
 
-    private boolean isHebrew(EditText et)
-    {
-        boolean matchFound = true; // if text is "" its still good
-        String text = et.getText().toString();
-
-        if (!text.isEmpty()) {
-            // א-ת and '
-            Pattern pattern = Pattern.compile("^[\u0590-\u05FF \" ’ ']+$");
-            Matcher matcher = pattern.matcher(et.getText().toString());
-
-            matchFound = matcher.find();
-
-            if (!matchFound) {
-                et.setError("חובה להיות בעברית");
-            }
-        }
-
-        return matchFound;
-    }
-
-    public void initDatePicker(TextView textView) {
-        MaterialDatePicker.Builder dateBuilder = MaterialDatePicker.Builder.datePicker();
-
-        dateBuilder.setTitleText("SELECT A DATE");
-
-        // create the instance of the material date
-        final MaterialDatePicker materialDatePicker = dateBuilder.build();
-
-        textView.setOnClickListener(
-                new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        materialDatePicker.show(getSupportFragmentManager(), "MATERIAL_DATE_PICKER");
-                    }
-                });
-
-        materialDatePicker.addOnPositiveButtonClickListener(
-                new MaterialPickerOnPositiveButtonClickListener() {
-                    @Override
-                    public void onPositiveButtonClick(Object selection) {
-                        // format the selected date
-                        Calendar utc = Calendar.getInstance(TimeZone.getTimeZone("UTC"));
-                        utc.setTimeInMillis((long) selection);
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
-                        String formatted = format.format(utc.getTime());
-
-                        textView.setText(formatted);
-                        Toast.makeText(FormActivity.this, getEndYear(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-
-    }
 }

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".FormActivity" >
+    tools:context=".FormParentsActivity">
 
     <Space
         android:layout_width="0dp"
@@ -30,7 +30,7 @@
             android:layout_weight="0.5"
             android:clickable="false"
             android:max="6"
-            android:progress="0" />
+            android:progress="2" />
 
         <Space
             android:layout_width="match_parent"
@@ -38,11 +38,13 @@
             android:layout_weight="0.5" />
 
         <TextView
+            android:id="@+id/parentType"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1.5"
             android:shadowColor="#000000"
             android:shadowRadius="8"
-            android:text="פרטי התלמיד/ה"
+            android:text="פרטי אב"
             android:textSize="24sp"
             android:textStyle="bold" />
 
@@ -59,10 +61,10 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical" >
 
                 <EditText
-                    android:id="@+id/firstName"
+                    android:id="@+id/parentFirstName"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
@@ -74,35 +76,24 @@
                     android:layout_height="20dp" />
 
                 <EditText
-                    android:id="@+id/lastName"
+                    android:id="@+id/parentLastName"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
                     android:hint="@string/last_name_hint"
+                    android:textColorHint="#757575"
                     android:inputType="textPersonName" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
-                <TextView
-                    android:id="@+id/id"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:gravity="center|right"
-                    android:text="תעודת זהות"
-                    android:textSize="16sp" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/wantedClass"
+                    android:id="@+id/maritalStatus"
                     style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
                     android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:hint="@string/wanted_class_hint">
+                    android:layout_height="match_parent"
+                    android:hint="@string/marital_status">
 
                     <AutoCompleteTextView
                         android:layout_width="match_parent"
@@ -115,106 +106,35 @@
                     android:layout_height="20dp" />
 
                 <EditText
-                    android:id="@+id/city"
+                    android:id="@+id/parentID"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:hint="@string/city_hint"
+                    android:hint="@string/id"
+                    android:textColorHint="#757575"
+                    android:inputType="numberPassword" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/parentBirthCountry"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:hint="@string/birth_country_hint"
+                    android:textColorHint="#757575"
                     android:inputType="textPersonName" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/street"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="@string/street_hint"
-                    android:inputType="textPersonName" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/addressNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="@string/address_number_hint"
-                    android:inputType="numberPassword" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/homeNumber"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="מספר הדירה"
-                    android:inputType="numberPassword" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/neighborhood"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="שכונה"
-                    android:inputType="textPersonName" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/zipCode"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="@string/zip_code_hint"
-                    android:inputType="numberPassword" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/studentPhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="טלפון נייד (תלמיד)"
-                    android:inputType="numberPassword" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/homePhone"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="טלפון בבית"
-                    android:inputType="numberPassword" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
                 <TextView
-                    android:id="@+id/birthDate"
+                    android:id="@+id/parentBirthDate"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
-                    android:ems="10"
                     android:hint="@string/birth_date_hint" />
 
                 <Space
@@ -222,129 +142,60 @@
                     android:layout_height="20dp" />
 
                 <EditText
-                    android:id="@+id/birthDateHebrew"
+                    android:id="@+id/parentProfession"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:hint="@string/birth_date_hebrew_hint"
-                    android:inputType="text" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/currentSchool"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:hint="@string/current_school_hint">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="70dp"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
+                    android:hint="@string/parent_profession"
+                    android:inputType="textPersonName" />
 
                 <Space
                     android:layout_width="match_parent"
                     android:layout_height="20dp" />
 
                 <EditText
-                    android:id="@+id/studentMail"
+                    android:id="@+id/parentEducationYears"
                     android:layout_width="match_parent"
                     android:layout_height="70dp"
                     android:ems="10"
-                    android:hint='דוא"ל (תלמיד)'
+                    android:hint="@string/education_years"
+                    android:inputType="numberPassword" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/parentWorkPlace"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:hint="שם מקום העבודה"
+                    android:inputType="textPersonName" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/parentPhone"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:hint="@string/phone"
+                    android:inputType="numberPassword" />
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="20dp" />
+
+                <EditText
+                    android:id="@+id/parentEmail"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:ems="10"
+                    android:hint="@string/email"
                     android:inputType="textEmailAddress" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/kupatHolim"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:hint="@string/kupat_holim_hint">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="70dp"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/birthCountry"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="@string/birth_country_hint"
-                    android:inputType="text" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <TextView
-                    android:id="@+id/aliyaDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:hint="תאריך עליה"
-                    android:textSize="20sp" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/tnuatNoar"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:ems="10"
-                    android:hint="חבר בתנועת נוער"
-                    android:inputType="text" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/maslul"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
-                    android:layout_width="match_parent"
-                    android:layout_height="70dp"
-                    android:hint="@string/maslul_hint">
-
-                    <AutoCompleteTextView
-                        android:layout_width="match_parent"
-                        android:layout_height="70dp"
-                        android:inputType="none" />
-                </com.google.android.material.textfield.TextInputLayout>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <EditText
-                    android:id="@+id/comments"
-                    android:layout_width="match_parent"
-                    android:layout_height="140dp"
-                    android:ems="10"
-                    android:hint="הערות"
-                    android:inputType="textMultiLine|text" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
 
             </LinearLayout>
         </ScrollView>
@@ -369,6 +220,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
+                android:onClick="back"
                 android:text="prev" />
 
             <Space

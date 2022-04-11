@@ -78,7 +78,9 @@ public class FormStudConfirmActivity extends AppCompatActivity {
             // this view has parameter of tag - so we know to move page
             if (view.getTag().equals("move"))
             {
-                Toast.makeText(FormStudConfirmActivity.this, "<moved activity>", Toast.LENGTH_SHORT).show();
+                Intent si = new Intent(FormStudConfirmActivity.this, FormParentsActivity.class);
+                si.putExtra("dad", true); // false = mom
+                startActivity(si);
             }
         }
     }
