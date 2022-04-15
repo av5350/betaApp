@@ -26,6 +26,8 @@ public class Helper {
     public static String studentFormDestPath = "";
     public static String studentFinishYear = "";
 
+    public static String currentStudentId = "";
+
     public static boolean isEmpty(EditText et, TextInputLayout layout)
     {
         boolean isEmpty = false;

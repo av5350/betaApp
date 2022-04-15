@@ -187,6 +187,7 @@ public class FormActivity extends AppCompatActivity {
         Intent gi = getIntent();
 
         id.setText(gi.getStringExtra("id"));
+        Helper.currentStudentId = gi.getStringExtra("id");
 
         studentFormPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + gi.getStringExtra("id") + ".xml";
         Helper.studentFormDestPath = studentFormPath;

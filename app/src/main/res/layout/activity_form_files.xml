@@ -30,7 +30,7 @@
             android:layout_weight="0.5"
             android:clickable="false"
             android:max="6"
-            android:progress="1" />
+            android:progress="4" />
 
         <Space
             android:layout_width="match_parent"
@@ -59,9 +59,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/lastYearCertificateA"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="last_year_certificate_A"
                 android:text="בחירת קובץ" />
 
             <Space
@@ -90,9 +93,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/lastYearCertificateB"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="last_year_certificate_B"
                 android:text="בחירת קובץ" />
 
             <Space
@@ -121,9 +127,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/twoYearCertificateB"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="two_year_certificate_B"
                 android:text="בחירת קובץ" />
 
             <Space
@@ -152,9 +161,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/parentIdBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="parent_id"
                 android:text="בחירת קובץ" />
 
             <Space
@@ -167,7 +179,7 @@
                 android:layout_height="match_parent"
                 android:layout_weight="6"
                 android:gravity="right"
-                android:text="@string/parant_id" />
+                android:text="@string/parent_id" />
 
         </LinearLayout>
 
@@ -183,9 +195,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/studentPicture"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="student_picture"
                 android:text="בחירת קובץ" />
 
             <Space
@@ -214,9 +229,12 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/moreFiles"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:layout_weight="0.5"
+                android:onClick="getFileFromUser"
+                android:tag="more_files"
                 android:text="בחירת קובץ" />
 
             <Space

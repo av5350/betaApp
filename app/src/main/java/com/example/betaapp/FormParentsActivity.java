@@ -155,7 +155,8 @@ public class FormParentsActivity extends AppCompatActivity {
                 }
                 else
                 {
-                    Toast.makeText(FormParentsActivity.this, "next ac", Toast.LENGTH_SHORT).show();
+                    Intent si = new Intent(FormParentsActivity.this, FormFilesActivity.class);
+                    startActivity(si);
                 }
             }
         }
