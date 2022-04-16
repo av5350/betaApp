@@ -12,8 +12,10 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -28,17 +30,23 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 
 public class FormFilesActivity extends AppCompatActivity {
     Uri photoUri;
     Button clickedBtn;
     boolean nowUploading = false;
     HashMap<String, Integer> buttons = new HashMap<>();
+    Set<String> greenButtons = new HashSet<String>(); // every item in a set can be once (number of green buttons)
+    SeekBar seekbarState;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_form_files);
+
+        seekbarState = (SeekBar) findViewById(R.id.seekbarState);
 
         // init all buttons (later we will change their color to green/red)
         buttons.put("last_year_certificate_A", R.id.lastYearCertificateA);
@@ -48,6 +56,15 @@ public class FormFilesActivity extends AppCompatActivity {
         buttons.put("student_picture", R.id.studentPicture);
         buttons.put("more_files", R.id.moreFiles);
 
+        // the user could not change the seekbar state by clicking
+        seekbarState.setOnTouchListener(new View.OnTouchListener()
+        {
+            @Override
+            public boolean onTouch(View v, MotionEvent event)
+            {
+                return true;
+            }
+        });
         initUI();
     }
 
@@ -62,6 +79,10 @@ public class FormFilesActivity extends AppCompatActivity {
                             // (for this field, file was uploaded)
                             button = (Button) findViewById(buttons.get(item.getName()));
                             button.setBackgroundColor(Color.GREEN);
+
+                            // we dont want the more_files to count in the set
+                            if (!(item.getName()).equals("more_files"))
+                                greenButtons.add(item.getName());
                         }
                     }
                 });
@@ -129,8 +150,6 @@ public class FormFilesActivity extends AppCompatActivity {
 
     private void uploadFileToFirebase(Uri file, String fileName)
     {
-        // todo: fileName, change btn color if success or failed
-
         UploadTask uploadTask = FBref.storageRef.child("files/"+ Helper.currentStudentId + "/" + fileName).putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -152,7 +171,33 @@ public class FormFilesActivity extends AppCompatActivity {
                 clickedBtn.setBackgroundColor(Color.GREEN);
                 Toast.makeText(FormFilesActivity.this, "הקובץ שנבחר הועלה", Toast.LENGTH_SHORT).show();
                 nowUploading = false;
+
+                // we dont want the more_files to count in the set
+                if (!(clickedBtn.getTag()).equals("more_files"))
+                    greenButtons.add((String) clickedBtn.getTag());
             }
         });
+    }
+
+    public void back(View view) {
+        finish();
+    }
+
+    public void finishForm(View view) {
+        // if all the *must* fields are completed
+        if (greenButtons.size() == 5)
+        {
+            FBref.refStudents.child(Helper.currentStudentId).child("formState").setValue(1);
+            FBref.refStudents.child(Helper.currentStudentId).child("status").setValue(1);
+            Toast.makeText(FormFilesActivity.this, "השאלון התקבל בהצלחה", Toast.LENGTH_SHORT).show();
+
+            Intent si = new Intent(FormFilesActivity.this, SelectChildActivity.class);
+            si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
+            startActivity(si);
+        }
+        else
+        {
+            Toast.makeText(FormFilesActivity.this, "חובה להעלות קובץ לכל השדות המסומנים", Toast.LENGTH_SHORT).show();
+        }
     }
 }

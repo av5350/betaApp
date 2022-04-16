@@ -8,6 +8,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -95,7 +96,7 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         newChildDialog.setPositiveButton("הוסף", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Student newStudent = new Student(studentID.getText().toString(), FBref.auth.getCurrentUser().getUid(), secondParentEmail.getText().toString(), "", "");
+                Student newStudent = new Student(studentID.getText().toString(), FBref.auth.getCurrentUser().getUid(), secondParentEmail.getText().toString(), "", "", 0, 0, 0);
                 FBref.refStudents.child(studentID.getText().toString()).setValue(newStudent);
 
                 childrenID.add(studentID.getText().toString());
@@ -118,27 +119,29 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
     public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
         childID = childrenID.get(i);
 
-        // get the registerFormId from the child object in firebase
-        FBref.refStudents.child(childID).child("registrationFormID").addListenerForSingleValueEvent(new ValueEventListener() {
+        // get the children object from firebase
+        FBref.refStudents.child(childID).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dS) {
-                String formPath = (String) dS.getValue();
+                int status = (int) dS.child("status").getValue(Integer.class);
+                String formPath = dS.child("registrationFormID").getValue(String.class);
 
-                // if the user doesnt have a xml form
-                if (formPath.equals(""))
+                // if the student didnt finished the form - let him continue it
+                if (status == 0)
                 {
-                    downloadTemplateXML();
+                    // download the student's xml form file (or template)
+                    downloadXML(formPath);
                 }
                 else
                 {
-                    downloadChildXml(formPath);
+                    Toast.makeText(SelectChildActivity.this, "לא ניתן להשלים את הפעולה, השאלון כבר הוגש", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
-            public void onCancelled(@NonNull DatabaseError databaseError) {
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-
         return false;
     }
 
@@ -149,8 +152,11 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         startActivity(si);
     }
 
-    private void downloadTemplateXML()
+    private void downloadXML(String formPath)
     {
+        StorageReference pathReference;
+        File localFile;
+
         progressDialog = new ProgressDialog(this);
         progressDialog.setTitle("מוריד קבצי עזר");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -158,10 +164,18 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         progressDialog.setProgress(0);
         progressDialog.show();
 
-        // Create a reference with an initial file path and name
-        StorageReference pathReference = FBref.storageRef.child("forms/template.xml");
+        // if wants to download a template xml (user doesnt have an xml form already)
+        if (formPath.equals("")) {
+            // Create a reference with an initial file path and name
+            pathReference = FBref.storageRef.child("forms/template.xml");
+            localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/student_tempXML.xml");
+        }
+        else // the file already exists in the db
+        {
+            pathReference = FBref.storageRef.child("forms").child(formPath);
+            localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + childID + ".xml");
+        }
 
-        File localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/student_tempXML.xml");
         try {
             localFile.createNewFile();
             localFile.setReadable(true);
@@ -197,52 +211,21 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    private void downloadChildXml(String formPath)
-    {
-        progressDialog = new ProgressDialog(this);
-        progressDialog.setTitle("מוריד קבצי עזר");
-        progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-        progressDialog.setIndeterminate(false);
-        progressDialog.setProgress(0);
-        progressDialog.show();
+    public void logout(View view) {
+        FBref.auth.signOut();
+        removeUserCredential(); // remove the Credential because we logged out
 
-        // Create a reference with an initial file path and name
-        StorageReference pathReference = FBref.storageRef.child("forms").child(formPath);
-
-        File localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + childID + ".xml");
-        try {
-            localFile.createNewFile();
-            localFile.setReadable(true);
-            localFile.setWritable(true);
-
-            pathReference.getFile(localFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
-                @Override
-                public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    // Local temp file has been created
-                    progressDialog.dismiss();
-                    goFormActivity();
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception exception) {
-                    // Handle any errors
-                    localFile.delete();
-                    Toast.makeText(SelectChildActivity.this, "An error occurred. Try again!", Toast.LENGTH_SHORT).show();
-                }
-            }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>(){
-                @Override
-                public void onProgress(@NonNull FileDownloadTask.TaskSnapshot taskSnapshot) {
-                    //calculating progress percentage
-                    double progress = (100.0 * taskSnapshot.getBytesTransferred()) / taskSnapshot.getTotalByteCount();
-                    //displaying percentage in progress dialog
-                    progressDialog.setMessage("Downloaded " + ((int) progress) + "%...");
-                    progressDialog.setProgress((int) progress);
-                }
-            });
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Intent si = new Intent(SelectChildActivity.this, MainActivity.class);
+        si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
+        startActivity(si);
     }
 
+    // if the user dont wants to stay connected, and he signin/signup using mail - remove the Credential
+    private void removeUserCredential()
+    {
+        SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
+        SharedPreferences.Editor editor = signInState.edit();
+        editor.putString("credential", "");
+        editor.commit();
+    }
 }
