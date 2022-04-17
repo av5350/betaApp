@@ -168,12 +168,12 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         if (formPath.equals("")) {
             // Create a reference with an initial file path and name
             pathReference = FBref.storageRef.child("forms/template.xml");
-            localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/student_tempXML.xml");
+            localFile = new File(getApplicationContext().getCacheDir().getAbsolutePath() + "/student_tempXML.xml");
         }
         else // the file already exists in the db
         {
             pathReference = FBref.storageRef.child("forms").child(formPath);
-            localFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + childID + ".xml");
+            localFile = new File(getApplicationContext().getCacheDir().getAbsolutePath() + "/" + childID + ".xml");
         }
 
         try {

@@ -189,7 +189,7 @@ public class FormActivity extends AppCompatActivity {
         id.setText(gi.getStringExtra("id"));
         Helper.currentStudentId = gi.getStringExtra("id");
 
-        studentFormPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + gi.getStringExtra("id") + ".xml";
+        studentFormPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + gi.getStringExtra("id") + ".xml";
         Helper.studentFormDestPath = studentFormPath;
 
         seekbarState = (SeekBar) findViewById(R.id.seekbarState);
@@ -249,7 +249,7 @@ public class FormActivity extends AppCompatActivity {
         else
         {
             // init the XmlHelper with the temp xml path we downloaded
-            String tempPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/student_tempXML.xml";
+            String tempPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/student_tempXML.xml";
             XmlHelper.init(tempPath, true);
             data = XmlHelper.getData(new ArrayList<String>(ids.values()));
         }

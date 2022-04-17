@@ -1,8 +1,6 @@
 package com.example.betaapp;
 
 import android.net.Uri;
-import android.os.Environment;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
@@ -18,14 +16,12 @@ import org.w3c.dom.NodeList;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -36,10 +32,8 @@ public class XmlHelper {
 
     private static boolean isFirstActivity; // which activity start the init (in first activity we need to save the xml name is database)
 
-    public static boolean init(String xmlPath, boolean firstActivity)
+    public static void init(String xmlPath, boolean firstActivity)
     {
-        boolean goodInit = false;
-
         isFirstActivity = firstActivity;
 
         // Instantiate the Factory
@@ -61,12 +55,9 @@ public class XmlHelper {
 
             root = doc.getDocumentElement();
 
-            goodInit = true;
-
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return goodInit;
     }
 
     // finish yer - the year that student will finish school
