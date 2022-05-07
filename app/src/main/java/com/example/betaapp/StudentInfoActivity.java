@@ -18,7 +18,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class StudentInfoActivity extends AppCompatActivity {
-    TextView studentFirstName, studentLastName, studentID, studentCity, studentSchool, studentGrade, studentMaslul, phoneParent, emailParent;
+    TextView studentFirstName, studentLastName, studentID, studentCity, studentSchool, studentGrade,
+            studentMaslul, phoneParent, emailParent, typeParent, parentName;
     String parentPhone, parentEmail;
 
     @Override
@@ -45,6 +46,8 @@ public class StudentInfoActivity extends AppCompatActivity {
         studentMaslul = (TextView) findViewById(R.id.studentMaslul);
         phoneParent = (TextView) findViewById(R.id.phoneParent);
         emailParent = (TextView) findViewById(R.id.emailParent);
+        typeParent = (TextView) findViewById(R.id.typeParent);
+        parentName = (TextView) findViewById(R.id.parentName);
 
         Intent gi = getIntent();
         String localFormPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + gi.getStringExtra("studentID") + ".xml";
@@ -67,11 +70,14 @@ public class StudentInfoActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String parentUID = snapshot.getValue(String.class);
 
-                FBref.refUsers.child(parentUID).child("isDad").addListenerForSingleValueEvent(new ValueEventListener() {
+                FBref.refUsers.child(parentUID).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         // get the relevant(the authenticated) user details
-                        String isParentDad = snapshot.getValue(Boolean.class) ? "dad" : "mom";
+                        String isParentDad = snapshot.child("isDad").getValue(Boolean.class) ? "dad" : "mom";
+
+                        typeParent.setText("ממלא: " + (snapshot.child("isDad").getValue(Boolean.class) ? "אבא" : "אמא"));
+                        parentName.setText("שם הורה: " + snapshot.child("firstName").getValue(String.class) + " " + snapshot.child("lastName").getValue(String.class));
 
                         ArrayList<String> wantedTags = new ArrayList<>();
                         wantedTags.add(isParentDad + "Phone");
@@ -121,11 +127,9 @@ public class StudentInfoActivity extends AppCompatActivity {
     }
 
     public void openEmail(View view) {
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse("mailto:")); // only email apps should handle this
-        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{parentEmail});
-        if (intent.resolveActivity(getPackageManager()) != null) {
-            startActivity(intent);
-        }
+        Intent email = new Intent(Intent.ACTION_SEND);
+        email.putExtra(Intent.EXTRA_EMAIL, new String[]{parentEmail});
+        email.setType("message/rfc822");
+        startActivity(Intent.createChooser(email, "בחר אפליקציה כדי להמשיך: "));
     }
 }
