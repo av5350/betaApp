@@ -30,7 +30,7 @@ public class XmlHelper {
     private static Document doc;
     private static Element root;
 
-    private static boolean isFirstActivity; // which activity start the init (in first activity we need to save the xml name is database)
+    private static boolean isFirstActivity; // which activity start the init (in first activity we need to save the xml path and finish year in database)
 
     public static void init(String xmlPath, boolean firstActivity)
     {

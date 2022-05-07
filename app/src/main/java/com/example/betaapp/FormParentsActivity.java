@@ -4,6 +4,7 @@ import static com.example.betaapp.Helper.initDatePicker;
 import static com.example.betaapp.Helper.isEmpty;
 import static com.example.betaapp.Helper.isHebrew;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.AlertDialog;
@@ -20,6 +21,10 @@ import android.widget.Toast;
 
 import com.google.android.material.textfield.MaterialAutoCompleteTextView;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
@@ -119,6 +124,41 @@ public class FormParentsActivity extends AppCompatActivity {
         {
             parentType.setText("פרטי אם");
             seekbarState.setProgress(3);
+        }
+
+        // if its the first time entering the activity
+        if (parentFirstName.getText().toString() == null)
+        {
+            FBref.refUsers.child(FBref.auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    boolean isUserDad = snapshot.child("isDad").getValue(Boolean.class);
+
+                    // if its the relevant activity for the user (mom/dad)
+                    if (isDadActivity.equals("dad") == isUserDad)
+                    {
+                        parentFirstName.setText(snapshot.child("firstName").getValue(String.class));
+                        parentLastName.setText(snapshot.child("lastName").getValue(String.class));
+
+                        // get the logged in user's data (phone + mail)
+                        FirebaseUser user = FBref.auth.getCurrentUser();
+                        parentPhone.setText(user.getPhoneNumber());
+                        parentEmail.setText(user.getEmail());
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+                }
+            });
+        }
+        // if the there is a data already - avoid from changing it! - just view it
+        else {
+            // https://stackoverflow.com/questions/660151/how-to-replicate-androideditable-false-in-code
+            parentFirstName.setKeyListener(null);
+            parentLastName.setKeyListener(null);
+            parentPhone.setKeyListener(null);
+            parentEmail.setKeyListener(null);
         }
     }
 

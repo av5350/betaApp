@@ -184,6 +184,10 @@ public class FormActivity extends AppCompatActivity {
         ids.put(R.id.maslul, "maslul");
         ids.put(R.id.comments, "comments");
 
+        // למחוק!!!!!!!!
+        // https://stackoverflow.com/questions/660151/how-to-replicate-androideditable-false-in-code
+        firstName.setKeyListener(null);
+
         Intent gi = getIntent();
 
         id.setText(gi.getStringExtra("id"));
@@ -322,6 +326,10 @@ public class FormActivity extends AppCompatActivity {
                     birthDate.setClickable(false);
 
                     XmlHelper.pushData(data);
+
+                    // save student's first and last name
+                    FBref.refStudents.child(Helper.currentStudentId).child("firstName").setValue(firstName.getText().toString());
+                    FBref.refStudents.child(Helper.currentStudentId).child("lastName").setValue(lastName.getText().toString());
 
                     // if want to move page
                     // this view has parameter of tag - so we know to move page

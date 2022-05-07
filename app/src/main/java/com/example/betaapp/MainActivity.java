@@ -3,14 +3,19 @@ package com.example.betaapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -170,23 +175,82 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // upload the new user to firebase database
-                            User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null);
-                            FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
-
-                            // if the user dont want to stay connected all time - remove the credential from SharedPreferences
-                            if (!stayConnected.isChecked()) {
-                                removeUserCredential();
-                            }
-
-                            // this function is called just when signup - so everyone here are parents (for now)
-                            Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
-                            startActivity(si);
+                            askUserInfo(); // ask the user for additional info (name, gender)
                         } else {
                             Toast.makeText(MainActivity.this, "התרחשה בעיה! אנא נסה שנית", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
+    }
+
+    private void askUserInfo()
+    {
+        AlertDialog.Builder userInfoDialog = new AlertDialog.Builder(this);
+        userInfoDialog.setTitle("מידע נוסף");
+        userInfoDialog.setMessage("כדי לסיים את ההרשמה, אנא מלא את הפרטים הבאים:");
+
+        final EditText firstName = new EditText(this);
+        final EditText lastName = new EditText(this);
+        final RadioGroup radioGroup = new RadioGroup(this);
+        final RadioButton dadBtn = new RadioButton(this);
+        final RadioButton momBtn = new RadioButton(this);
+
+        firstName.setHint("שם פרטי");
+        lastName.setHint("שם משפחה");
+        dadBtn.setText("אני האבא של הילדים");
+        momBtn.setText("אני האמא של הילדים");
+        radioGroup.addView(dadBtn);
+        radioGroup.addView(momBtn);
+        radioGroup.check(dadBtn.getId());
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        layout.addView(firstName);
+        layout.addView(lastName);
+        layout.addView(radioGroup);
+
+        userInfoDialog.setView(layout);
+
+        userInfoDialog.setPositiveButton("סיים רישום", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                // if first name and last name are not empty and they are in hebrew
+                if ((!TextUtils.isEmpty(firstName.getText().toString()) && !TextUtils.isEmpty(lastName.getText().toString())) && (Helper.isHebrew(firstName) && Helper.isHebrew(lastName)))
+                {
+                    // upload the new user to firebase database
+                    User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null, firstName.getText().toString(), lastName.getText().toString(), radioGroup.getCheckedRadioButtonId() == dadBtn.getId());
+                    FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
+
+                    // if the user dont want to stay connected all time - remove the credential from SharedPreferences
+                    if (!stayConnected.isChecked()) {
+                        removeUserCredential();
+                    }
+
+                    // this function is called just when signup - so everyone here are parents (for now)
+                    Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
+                    startActivity(si);
+                }
+                // delete the user from firebase because it didnt finished the registration
+                else {
+                    FirebaseUser user = FBref.auth.getCurrentUser();
+                    user.delete();
+                    Toast.makeText(MainActivity.this, "אנא התחל את הרישום מחדש!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        userInfoDialog.setNegativeButton("בטל", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                FirebaseUser user = FBref.auth.getCurrentUser();
+                user.delete();
+                Toast.makeText(MainActivity.this, "אנא התחל את הרישום מחדש!", Toast.LENGTH_SHORT).show();
+                dialogInterface.dismiss();
+            }
+        });
+
+        userInfoDialog.show();
     }
 
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
@@ -361,14 +425,22 @@ public class MainActivity extends AppCompatActivity {
         FBref.refUsers.child(FBref.auth.getCurrentUser().getUid() + "/role").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dS) {
-                if (dS.getValue(Long.class) == 2)
+                Intent si;
+
+                switch (dS.getValue(Long.class).intValue())
                 {
-                    Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
-                    startActivity(si);
-                }
-                else
-                {
-                    Toast.makeText(MainActivity.this, "IDK :(", Toast.LENGTH_SHORT).show();
+                    case 0:
+                        si = new Intent(MainActivity.this, AdminMainActivity.class);
+                        si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
+                        startActivity(si);
+                        break;
+                    case 2:
+                        si = new Intent(MainActivity.this, SelectChildActivity.class);
+                        si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
+                        startActivity(si);
+                        break;
+                    default:
+                        Toast.makeText(MainActivity.this, "התרחשה תקלה במסד הנתונים. אנא נסה שנית", Toast.LENGTH_SHORT).show();
                 }
             }
             @Override
