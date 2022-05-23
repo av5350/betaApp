@@ -43,4 +43,5 @@ dependencies {
     implementation 'commons-validator:commons-validator:1.5.1'
 
     implementation 'com.google.code.gson:gson:2.8.7'
+    implementation 'com.itextpdf:itextpdf:5.5.13.3'
 }

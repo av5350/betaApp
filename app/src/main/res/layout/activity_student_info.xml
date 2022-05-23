@@ -237,6 +237,7 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="#FFFFFF"
+                        android:onClick="createPDF"
                         app:srcCompat="@drawable/pdf_logo" />
 
                     <Space
