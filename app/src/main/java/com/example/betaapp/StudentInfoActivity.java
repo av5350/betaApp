@@ -44,6 +44,8 @@ public class StudentInfoActivity extends AppCompatActivity {
     String parentPhone, parentEmail;
     ProgressDialog progressDialog;
 
+    HashMap<String, String> fields; // student's form fields
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +80,7 @@ public class StudentInfoActivity extends AppCompatActivity {
         studentID.setText("תעודת זהות: " + gi.getStringExtra("studentID"));
 
         // get all relevant data from the xml
-        HashMap<String, String> fields = getFieldsData();
+        fields = getFieldsData();
         studentFirstName.setText("שם פרטי: " + fields.get("firstName"));
         studentLastName.setText("שם משפחה: " + fields.get("lastName"));
         studentCity.setText("יישוב: " + fields.get("city"));
@@ -216,9 +218,9 @@ public class StudentInfoActivity extends AppCompatActivity {
             form.setGenerateAppearances(true);
             BaseFont unicode = BaseFont.createFont("res/font/rubik.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             form.addSubstitutionFont(unicode);
-            form.setField("first_name", "aaa");
-            form.setField("last_name", "בונה סוכה");
-            stamper.setFormFlattening(true);
+            form.setField("first_name", fields.get("firstName"));
+            form.setField("last_name", fields.get("lastName"));
+            stamper.setFormFlattening(true); // set the form to read only state
             stamper.close();
             reader.close();
 

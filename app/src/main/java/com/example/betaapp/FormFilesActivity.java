@@ -106,7 +106,6 @@ public class FormFilesActivity extends AppCompatActivity {
             // Intent for camera activity to capture a new picture
             Intent takePhotoIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-            //File tempFile = Environment.getExternalStoragePublicDirectory("/myimage/save.jpg");
             File tempFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES), "aabb.jpg");
 
             photoUri = Uri.fromFile(tempFile);
