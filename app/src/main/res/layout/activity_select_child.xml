@@ -22,6 +22,22 @@
             android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <TextView
+            android:id="@+id/welcomeMsg"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:fontFamily="@font/rubik"
+            android:gravity="center|right"
+            android:text="TextView"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5" />
+
         <ListView
             android:id="@+id/childrenLV"
             android:layout_width="match_parent"
@@ -36,15 +52,9 @@
         <Button
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             android:onClick="addChild"
-            android:text="Add child" />
-
-        <Button
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:onClick="logout"
-            android:text="למחוק - אבל זה התנתקות כרגע" />
+            android:text="הוסף ילד" />
 
         <Space
             android:layout_width="match_parent"

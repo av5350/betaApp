@@ -1,6 +1,9 @@
 package com.example.betaapp;
 
 import android.app.Dialog;
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -54,7 +57,7 @@ public class Helper {
         boolean matchFound = true; // if text is "" its still good
         String text = et.getText().toString();
 
-        if (!text.isEmpty()) {
+        if (!TextUtils.isEmpty(text)) {
             // א-ת and '
             Pattern pattern = Pattern.compile("^[\u0590-\u05FF \" ’ ']+$");
             Matcher matcher = pattern.matcher(et.getText().toString());
@@ -115,8 +118,52 @@ public class Helper {
 
     }
 
+    /**
+     *  This function removes the Credential if user doesn't want to stay connected
+     *
+     *  @param context the screen context
+     */
+    public static void removeUserCredential(Context context)
+    {
+        SharedPreferences signInState = context.getSharedPreferences("States", context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = signInState.edit();
+        editor.putString("credential", "");
+        editor.commit();
+    }
+
+    public static void logout(Context context) {
+        FBref.auth.signOut();
+        removeUserCredential(context); // remove the Credential because we logged out
+
+        Intent si = new Intent(context, MainActivity.class);
+        si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
+        context.startActivity(si);
+    }
+
     public static boolean checkID(String id)
     {
-        return false;
+        int sumIdNumbers = 0;
+        int currDigit = 0;
+
+        // break a number to its digits
+        char[] idNumbers = id.toCharArray();
+
+        for (int i = 0; i < 9; i++)
+            {
+                currDigit = Character.getNumericValue(idNumbers[i]);
+
+                // digit in odd index (multiply by 1) and in even index (multiply by 2)
+                currDigit *= (i % 2) + 1;
+
+                // every number the bigger than 9 will be the sum of the 2 digits that creates it
+                // so we minus the number by 9 (18 will be 1+8=9)
+                if (currDigit > 9)
+                    currDigit -= 9;
+
+                sumIdNumbers += currDigit;
+            }
+
+            // if the sum divided by 10 with no remainder - its good id
+            return (sumIdNumbers % 10 == 0);
+        }
     }
-}

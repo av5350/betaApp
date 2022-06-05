@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -21,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -37,9 +40,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SelectChildActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener {
+/**
+ * The type Select child activity.
+ */
+public class SelectChildActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     AlertDialog.Builder newChildDialog;
     ListView childrenLV;
+    TextView welcomeMsg;
     ArrayAdapter<String> adp;
     ArrayList<String> childrenID = new ArrayList<String>();
 
@@ -52,22 +59,33 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_select_child);
 
+        welcomeMsg = (TextView) findViewById(R.id.welcomeMsg);
         childrenLV = (ListView) findViewById(R.id.childrenLV);
 
-        childrenLV.setOnItemLongClickListener(this);
+        childrenLV.setOnItemClickListener(this);
 
         adp = new ArrayAdapter<String>(SelectChildActivity.this, R.layout.support_simple_spinner_dropdown_item, childrenID);
         childrenLV.setAdapter(adp);
 
-        getChildren();
+        initUI();
     }
 
-    public void getChildren()
+    /**
+     * Init the welcome message (with the parents first name), and fill the listview data with the children id
+     */
+    public void initUI()
     {
-        FBref.refUsers.child(FBref.auth.getCurrentUser().getUid() + "/childrenID").addListenerForSingleValueEvent(new ValueEventListener() {
+        FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dS) {
-                for (DataSnapshot data : dS.getChildren()) {
+                boolean isDad = dS.child("isDad").getValue(Boolean.class);
+
+                if (isDad)
+                    welcomeMsg.setText("ברוך הבא " + dS.child("firstName").getValue(String.class));
+                else // its a mom
+                    welcomeMsg.setText("ברוכה הבאה " + dS.child("firstName").getValue(String.class));
+
+                for (DataSnapshot data : dS.child("childrenID").getChildren()) {
                     childrenID.add(data.getValue(String.class));
                 }
                 adp.notifyDataSetChanged();
@@ -78,6 +96,11 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         });
     }
 
+    /**
+     * Add child dialog - get from the user the child id and the second parent mail.
+     *
+     * @param view the view
+     */
     public void addChild(View view) {
         newChildDialog = new AlertDialog.Builder(this);
         newChildDialog.setTitle("הכנס ילד חדש");
@@ -85,7 +108,7 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         final EditText studentID = new EditText(this);
         final EditText secondParentEmail = new EditText(this);
 
-        studentID.setHint("תעודת זהות ילד");
+        studentID.setHint("תעודת זהות ילד באורך 9 ספרות");
         secondParentEmail.setHint("מייל הורה שני");
 
         LinearLayout layout = new LinearLayout(this);
@@ -99,12 +122,15 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         newChildDialog.setPositiveButton("הוסף", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                Student newStudent = new Student(studentID.getText().toString(), FBref.auth.getCurrentUser().getUid(), secondParentEmail.getText().toString(), "", "", 0, 0, 0);
-                FBref.refStudents.child(studentID.getText().toString()).setValue(newStudent);
-
-                childrenID.add(studentID.getText().toString());
-                FBref.refUsers.child(FBref.auth.getCurrentUser().getUid() + "/childrenID").setValue(childrenID);
-                adp.notifyDataSetChanged();
+                // if mail and id are not empty, the id is in len of 9 and the id is good
+                if ((!TextUtils.isEmpty(secondParentEmail.getText().toString())) &&
+                        (!TextUtils.isEmpty(studentID.getText().toString())) &&
+                        (studentID.getText().toString().length() == 9) && (Helper.checkID(studentID.getText().toString()))) {
+                    checkIdInDB(studentID.getText().toString(), secondParentEmail.getText().toString());
+                }
+                else {
+                    Toast.makeText(SelectChildActivity.this, "לפחות אחד מן הנתונים שגוי, אנא נסה שנית!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -118,8 +144,39 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         newChildDialog.show();
     }
 
+    /**
+     * Check that the id is not already in the db (there are no 2 people with the same id)
+     *
+     * @param id the id to check
+     * @param secondParentEmail the additional info to push to db if the id is not already in the db
+     */
+    private void checkIdInDB(String id, String secondParentEmail)
+    {
+        FBref.refStudents.child(id).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dS) {
+                // if the id is already in the db
+                if (dS.exists())
+                    Toast.makeText(SelectChildActivity.this, "תעודת הזהות כבר נמצאת במערכת!", Toast.LENGTH_SHORT).show();
+                else {
+                    Student newStudent = new Student(id, FBref.auth.getCurrentUser().getUid(), secondParentEmail, "", "", 0, 0, 0);
+                    FBref.refStudents.child(id).setValue(newStudent);
+
+                    // update the lv and the list of children of a person in db
+                    childrenID.add(id);
+                    FBref.refUsers.child(FBref.auth.getCurrentUser().getUid() + "/childrenID").setValue(childrenID);
+                    adp.notifyDataSetChanged();
+                }
+
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+            }
+        });
+    }
+
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         childID = childrenID.get(i);
 
         // get the children object from firebase
@@ -145,16 +202,13 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
             public void onCancelled(@NonNull DatabaseError error) {
             }
         });
-        return false;
     }
 
-    private void goFormActivity()
-    {
-        Intent si = new Intent(SelectChildActivity.this, FormActivity.class);
-        si.putExtra("id", childID);
-        startActivity(si);
-    }
-
+    /**
+     * Download the xml form for the selected child
+     *
+     * @param formPath the path to the wanted form (or "" if want to download a template xml)
+     */
     private void downloadXML(String formPath)
     {
         StorageReference pathReference;
@@ -189,14 +243,18 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
                 public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
                     // Local temp file has been created
                     progressDialog.dismiss();
-                    goFormActivity();
+
+                    // move to form activity
+                    Intent si = new Intent(SelectChildActivity.this, FormActivity.class);
+                    si.putExtra("id", childID);
+                    startActivity(si);
                 }
             }).addOnFailureListener(new OnFailureListener() {
                 @Override
                 public void onFailure(@NonNull Exception exception) {
                     // Handle any errors
                     localFile.delete();
-                    Toast.makeText(SelectChildActivity.this, "An error occurred. Try again!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(SelectChildActivity.this, "התרחשה בעיה בעת הורדת הקובץ. אנא נסה שנית!", Toast.LENGTH_SHORT).show();
                 }
             }).addOnProgressListener(new OnProgressListener<FileDownloadTask.TaskSnapshot>(){
                 @Override
@@ -214,21 +272,34 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         }
     }
 
-    public void logout(View view) {
-        FBref.auth.signOut();
-        removeUserCredential(); // remove the Credential because we logged out
-
-        Intent si = new Intent(SelectChildActivity.this, MainActivity.class);
-        si.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK); // make that the user could not return activities back (clear the stack)
-        startActivity(si);
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return ture if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
     }
 
-    // if the user dont wants to stay connected, and he signin/signup using mail - remove the Credential
-    private void removeUserCredential()
-    {
-        SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
-        SharedPreferences.Editor editor = signInState.edit();
-        editor.putString("credential", "");
-        editor.commit();
+    /**
+     * Where to go when the menu item was selected
+     *
+     * @param item The menu item that was selected.
+     * @return true - if it success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        // log out the user
+        if (id == R.id.logout)
+        {
+            Helper.logout(getApplicationContext());
+        }
+
+        return true;
     }
 }

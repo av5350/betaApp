@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.telephony.PhoneNumberUtils;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
@@ -42,6 +43,9 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * The type Main activity - login and signup activity.
+ */
 public class MainActivity extends AppCompatActivity {
     EditText mailET, phoneET, codeET;
     LinearLayout logInOptionLayout;
@@ -52,11 +56,10 @@ public class MainActivity extends AppCompatActivity {
 
     final Gson gson = new Gson();
     final boolean SIGN_UP_STATE = false;
+    boolean currentState = SIGN_UP_STATE;
 
     private String storedVerificationId = null;
     private PhoneAuthProvider.OnVerificationStateChangedCallbacks callbacks;
-
-    boolean currentState = SIGN_UP_STATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,50 +77,12 @@ public class MainActivity extends AppCompatActivity {
 
         SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
 
-        // Retrieve checkBox data
+        // Retrieve checkBox data (if want to stay connected)
         stayConnected.setChecked(signInState.getBoolean("wantStayConnected", false));
 
-        // if mail was sent - get the intent (the link redirects to the app)
+        // if mail was sent - try get the intent (the link redirects to this activity)
         if (signInState.getBoolean("isMailSent", false)) {
-            Intent intent = getIntent();
-
-            if (intent.getData() != null) {
-                String emailLink = intent.getData().toString();
-
-                // Confirm the link is a sign-in or sign-up email link(its the same function).
-                if (FBref.auth.isSignInWithEmailLink(emailLink)) {
-                    FBref.auth.signInWithEmailLink(signInState.getString("mail", ""), emailLink)
-                            .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if (task.isSuccessful()) {
-
-                                        // prevent log in with mail and then login with phone (or something else)
-                                        SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
-                                        SharedPreferences.Editor editor = signInState.edit();
-                                        editor.putBoolean("isMailSent", false);
-                                        editor.commit();
-
-                                        // if the link is not an sign-in link (so its sign-up)
-                                        if(!signInState.getBoolean("isSignIn", SIGN_UP_STATE)) {
-                                            // link the phone credential with the mail
-                                            linkMailPhone(gson.fromJson(signInState.getString("credential", ""), PhoneAuthCredential.class));
-                                        }
-                                        else { // sign in
-                                            // if user want to stay connected - save the email Credential
-                                            if (stayConnected.isChecked())
-                                                saveUserCredential(EmailAuthProvider.getCredentialWithLink(signInState.getString("mail", ""), emailLink), false);
-
-                                            // move to the relevant activity (based on the user's role)
-                                            switchRelevantActivity();
-                                        }
-                                    } else { // there was an error while trying to signup/login
-                                        Toast.makeText(MainActivity.this, "התרחשה בעיה בעת ההתחברות! אנא נסה שנית", Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-                }
-            }
+            finishEmailRegistration(signInState.getString("mail", ""));
         }
         // if the user saved the login credential - sign in the user
         else if (!signInState.getString("credential", "").equals(""))
@@ -142,7 +107,6 @@ public class MainActivity extends AppCompatActivity {
                 signInWithPhoneAuthCredential(phoneAuthCredential);
             }
 
-            // todo: האם להשאיר את הפונקציה הזאת בלי כלום בתוכה?
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 // This callback is invoked in an invalid request for verification is made,
@@ -162,27 +126,96 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        // if the user get into the app from email link for example, save the checkBox state
+        // if the user is going to get into the app from email link for example, save the checkBox state
         SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
         SharedPreferences.Editor editor = signInState.edit();
         editor.putBoolean("wantStayConnected", stayConnected.isChecked());
         editor.commit();
     }
 
-    public void linkMailPhone(PhoneAuthCredential credential) {
+    /**
+     * If the user opens the link when he wants to signup - the function create the new user
+     * If the user opens the link in login with mail option - the function moves the user to the next activity
+     *
+     * @param emailAddress the mail address that the link was sent to
+     */
+    private void finishEmailRegistration(String emailAddress)
+    {
+        Intent intent = getIntent();
+
+        if (intent.getData() != null) {
+            String emailLink = intent.getData().toString();
+
+            // Confirm the link is a sign-in or sign-up email link(its the same function).
+            if (FBref.auth.isSignInWithEmailLink(emailLink)) {
+                FBref.auth.signInWithEmailLink(emailAddress, emailLink)
+                        .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if (task.isSuccessful()) {
+
+                                    // prevent log in with mail and then login with phone (or something else)
+                                    SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = signInState.edit();
+                                    editor.putBoolean("isMailSent", false);
+                                    editor.commit();
+
+                                    // if the link is not an sign-in link (so its sign-up)
+                                    if(!signInState.getBoolean("isSignIn", SIGN_UP_STATE)) {
+                                        // link the phone credential with the mail
+                                        linkMailPhone(gson.fromJson(signInState.getString("credential", ""), PhoneAuthCredential.class));
+                                    }
+                                    else { // sign in
+                                        //  if its not a new user
+                                        if (!(task.getResult().getAdditionalUserInfo().isNewUser())) {
+                                            // if user wants to stay connected - save the email Credential
+                                            if (stayConnected.isChecked())
+                                                saveUserCredential(EmailAuthProvider.getCredentialWithLink(signInState.getString("mail", ""), emailLink), false);
+
+                                            // move to the relevant activity (based on the user's role)
+                                            switchRelevantActivity();
+                                        }
+                                        else
+                                        {
+                                            // because its new user - we need to delete it! (he created new user not from the signup page)
+                                            FirebaseUser user = FBref.auth.getCurrentUser();
+                                            user.delete();
+                                            Toast.makeText(MainActivity.this, "חשבון לא נמצא!", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                } else { // there was an error while trying to signup/login
+                                    Toast.makeText(MainActivity.this, "התרחשה בעיה בעת ההתחברות! אנא נסה שנית", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+            }
+        }
+    }
+
+    /**
+     * Link phone credential with the email credential (to create just 1 account)
+     *
+     * @param credential the phone credential to link
+     */
+    private void linkMailPhone(PhoneAuthCredential credential) {
         FBref.auth.getCurrentUser().linkWithCredential(credential)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            askUserInfo(); // ask the user for additional info (name, gender)
+                            // ask the user for additional info (name, gender)
+                            askUserInfo();
                         } else {
+                            Helper.removeUserCredential(getApplicationContext());
                             Toast.makeText(MainActivity.this, "התרחשה בעיה! אנא נסה שנית", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
 
+    /**
+     *  After the registration finished - get info about the user (name and gender)
+     */
     private void askUserInfo()
     {
         AlertDialog.Builder userInfoDialog = new AlertDialog.Builder(this);
@@ -222,19 +255,20 @@ public class MainActivity extends AppCompatActivity {
                     User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null, firstName.getText().toString(), lastName.getText().toString(), radioGroup.getCheckedRadioButtonId() == dadBtn.getId());
                     FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
 
-                    // if the user dont want to stay connected all time - remove the credential from SharedPreferences
+                    // if the user don't want to stay connected all time - remove the credential from SharedPreferences
                     if (!stayConnected.isChecked()) {
-                        removeUserCredential();
+                        Helper.removeUserCredential(getApplicationContext());
                     }
 
                     // this function is called just when signup - so everyone here are parents (for now)
                     Intent si = new Intent(MainActivity.this, SelectChildActivity.class);
                     startActivity(si);
                 }
-                // delete the user from firebase because it didnt finished the registration
+                // delete the user from firebase because he didn't finished the registration (there was an error with the inputs)
                 else {
                     FirebaseUser user = FBref.auth.getCurrentUser();
                     user.delete();
+                    Helper.removeUserCredential(getApplicationContext());
                     Toast.makeText(MainActivity.this, "אנא התחל את הרישום מחדש!", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -245,6 +279,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(DialogInterface dialogInterface, int i) {
                 FirebaseUser user = FBref.auth.getCurrentUser();
                 user.delete();
+                Helper.removeUserCredential(getApplicationContext());
                 Toast.makeText(MainActivity.this, "אנא התחל את הרישום מחדש!", Toast.LENGTH_SHORT).show();
                 dialogInterface.dismiss();
             }
@@ -253,9 +288,18 @@ public class MainActivity extends AppCompatActivity {
         userInfoDialog.show();
     }
 
+    /**
+     *  This function is called after the user got an sms code verification.
+     *  If its signup - now the function send the mail verification
+     *  If its login with mail - the function send the login link to the mail
+     *  If its login with phone - the function signin the user with the inputed credential
+     *
+     * @param credential the phone credential to auth with
+     */
     private void signInWithPhoneAuthCredential(PhoneAuthCredential credential) {
         // if its signup or if the user wants to signin with mail
         if ((currentState == SIGN_UP_STATE) || (logInOption.isChecked())) {
+            // the settings for the email verafictaion with link
             ActionCodeSettings actionCodeSettings = ActionCodeSettings.newBuilder()
                     // URL to redirect back to.
                     .setUrl("https://betasignup.page.link/finishSignUp")
@@ -301,15 +345,27 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onComplete(@NonNull Task<AuthResult> task) {
                             if (task.isSuccessful()) {
-                                // Sign in success, check if wants to stay connected
-                                if (stayConnected.isChecked())
-                                    saveUserCredential(credential, true);
-                                switchRelevantActivity();
+                                // if its not new user
+                                if (!task.getResult().getAdditionalUserInfo().isNewUser())
+                                {
+                                    // Sign in success, check if wants to stay connected
+                                    if (stayConnected.isChecked())
+                                        saveUserCredential(credential, true);
+
+                                    switchRelevantActivity();
+                                }
+                                else
+                                {
+                                    // because its new user - we need to delete it! (he created new user not from the signup page)
+                                    FirebaseUser user = FBref.auth.getCurrentUser();
+                                    user.delete();
+                                    Toast.makeText(MainActivity.this, "חשבון לא נמצא!", Toast.LENGTH_SHORT).show();
+                                }
                             } else {
                                 // Sign in failed
                                 if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                                     // The verification code entered was invalid
-                                    Toast.makeText(MainActivity.this, "קוד הזדהות שגוי. אנא נסה שנית!", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(MainActivity.this, "קוד ההזדהות שהוזן שגוי! אנא נסה שנית", Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -317,6 +373,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Sent to the user the sms verification code
+     *
+     * @param view the view
+     */
     public void getCode(View view) {
         // if the user entered text to phone field
         if (!phoneET.getText().toString().equals("")) {
@@ -335,15 +396,18 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Finish register and signin\signup the user.
+     *
+     * @param view the view
+     */
     public void finishRegister(View view) {
-        PhoneAuthCredential credential = null;
-
-        // phone login or full signup
+        // if its phone login or full signup
         if (!logInOption.isChecked() || currentState == SIGN_UP_STATE) {
             // if code sent (so we have the verification id)
             if ((storedVerificationId != null) && (!codeET.getText().toString().equals("")))
             {
-                credential = PhoneAuthProvider.getCredential(storedVerificationId, codeET.getText().toString());
+                PhoneAuthCredential credential = PhoneAuthProvider.getCredential(storedVerificationId, codeET.getText().toString());
                 signInWithPhoneAuthCredential(credential);
             }
             else
@@ -353,7 +417,7 @@ public class MainActivity extends AppCompatActivity {
         {
             // if the user entered text in the mail field
             if (!mailET.getText().toString().equals("")) {
-                signInWithPhoneAuthCredential(credential);
+                signInWithPhoneAuthCredential(null);
             }
             else
             {
@@ -362,6 +426,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Change current view ui - swap between signup and login.
+     *
+     * @param view the view
+     */
     public void changeCurrentState(View view) {
         // change the state of activity from sign up to log in
         currentState = !currentState;
@@ -382,6 +451,11 @@ public class MainActivity extends AppCompatActivity {
         codeET.setVisibility(View.VISIBLE);
     }
 
+    /**
+     * In the login view - change between login with phone and login with mail
+     *
+     * @param view the view
+     */
     public void onSwitchOption(View view) {
         if (logInOption.isChecked()) // if its email
         {
@@ -399,7 +473,12 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    // if user wants to stay connected - save the Credential
+    /**
+     *  This function saves the Credential if user wants to stay connected later
+     *
+     *  @param credential the credential to save
+     *  @param isPhoneCredential if the inputted credential is a phone credential or email credential
+     */
     private void saveUserCredential(AuthCredential credential, boolean isPhoneCredential)
     {
         SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
@@ -411,15 +490,9 @@ public class MainActivity extends AppCompatActivity {
         editor.commit();
     }
 
-    // if the user dont wants to stay connected, and he signin/signup using mail - remove the Credential
-    private void removeUserCredential()
-    {
-        SharedPreferences signInState = getSharedPreferences("States", MODE_PRIVATE);
-        SharedPreferences.Editor editor = signInState.edit();
-        editor.putString("credential", "");
-        editor.commit();
-    }
-
+    /**
+     *  This function moves the user to the next activity (based of his role)
+     */
     private void switchRelevantActivity()
     {
         FBref.refUsers.child(FBref.auth.getCurrentUser().getUid() + "/role").addListenerForSingleValueEvent(new ValueEventListener() {
