@@ -1,9 +1,12 @@
 package com.example.betaapp;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.CheckBox;
@@ -14,12 +17,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The type Form stud confirm activity.
+ */
 public class FormStudConfirmActivity extends AppCompatActivity {
     EditText numberBrothers;
     CheckBox checkboxAgreeContact, checkboxShareVideo;
+
     SeekBar seekbarState;
 
-    ArrayList<String> elementsIds = new ArrayList<>();
+    // map between the xml tag name and the value that there (or would be)
     HashMap<String, String> data;
 
     @Override
@@ -33,7 +40,7 @@ public class FormStudConfirmActivity extends AppCompatActivity {
 
         seekbarState = (SeekBar) findViewById(R.id.seekbarState);
 
-        // the user could not change the seekbar state by clicking
+        // make that the user could not change the seekbar state by clicking
         seekbarState.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -43,24 +50,38 @@ public class FormStudConfirmActivity extends AppCompatActivity {
             }
         });
 
-        Toast.makeText(FormStudConfirmActivity.this, Helper.studentFinishYear, Toast.LENGTH_SHORT).show();
-
         // all the numeric fields accepts just numbers
         numberBrothers.setTransformationMethod(null);
 
-        elementsIds.add("agreeContact");
-        elementsIds.add("shareVideo");
-        elementsIds.add("numberBrothers");
-
-        // get the current data from the xml file
-        data = XmlHelper.getData(elementsIds);
-
-        // update elements with their current values (from the xml)
-        numberBrothers.setText(data.get("numberBrothers"));
-        checkboxAgreeContact.setChecked(Boolean.parseBoolean(data.get("agreeContact")));
-        checkboxShareVideo.setChecked(Boolean.parseBoolean(data.get("shareVideo")));
+        getFieldsData();
     }
 
+    /**
+     * Get the updated elements fields values from the xml form file
+     */
+     private void getFieldsData()
+     {
+         ArrayList<String> elementsIds = new ArrayList<>();
+
+         // the fields we want their data from the xml file
+         elementsIds.add("agreeContact");
+         elementsIds.add("shareVideo");
+         elementsIds.add("numberBrothers");
+
+         // get the current data from the xml file
+         data = XmlHelper.getData(elementsIds);
+
+         // update elements with their current values (from the xml)
+         numberBrothers.setText(data.get("numberBrothers"));
+         checkboxAgreeContact.setChecked(Boolean.parseBoolean(data.get("agreeContact")));
+         checkboxShareVideo.setChecked(Boolean.parseBoolean(data.get("shareVideo")));
+     }
+
+    /**
+     * Save elements fields to the student's xml form.
+     *
+     * @param view the view
+     */
     public void saveData(View view) {
         // if one of the fields is empty
         if (!checkboxShareVideo.isChecked() || !checkboxAgreeContact.isChecked() || (numberBrothers.getText().toString().equals("")))
@@ -85,7 +106,43 @@ public class FormStudConfirmActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Go back to the last screen (FormActivity)
+     *
+     * @param view the view
+     */
     public void back(View view) {
         finish();
+    }
+
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return ture if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Where to go when the menu item was selected
+     *
+     * @param item The menu item that was selected.
+     * @return true - if it success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        // log out the user
+        if (id == R.id.logout)
+        {
+            Helper.logout(getApplicationContext());
+        }
+
+        return true;
     }
 }
