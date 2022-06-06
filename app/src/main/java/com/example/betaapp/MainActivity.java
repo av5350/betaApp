@@ -40,6 +40,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 import com.google.gson.Gson;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import java.util.ArrayList;
 import java.util.concurrent.TimeUnit;
 
@@ -415,8 +417,8 @@ public class MainActivity extends AppCompatActivity {
         }
         else // login with email
         {
-            // if the user entered text in the mail field
-            if (!mailET.getText().toString().equals("")) {
+            // if the user entered good text in the mail field
+            if (EmailValidator.getInstance().isValid(mailET.getText().toString())) {
                 signInWithPhoneAuthCredential(null);
             }
             else

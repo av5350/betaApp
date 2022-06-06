@@ -22,6 +22,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Adapter;
@@ -72,6 +74,7 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -82,6 +85,9 @@ import java.util.stream.Stream;
 
 import org.apache.commons.validator.routines.EmailValidator;
 
+/**
+ * The type Form activity.
+ */
 public class FormActivity extends AppCompatActivity {
     SeekBar seekbarState;
 
@@ -89,25 +95,29 @@ public class FormActivity extends AppCompatActivity {
 
     AlertDialog.Builder adb;
 
-    EditText firstName, lastName, city,
-    street, addressNumber, homeNumber,
-    neighborhood, zipCode, studentPhone, homePhone, birthDateHebrew, studentMail, birthCountry, tnuatNoar, comments;
+    EditText firstName, lastName, city, street, addressNumber, homeNumber, neighborhood, zipCode, studentPhone,
+            homePhone, birthDateHebrew, studentMail, birthCountry, tnuatNoar, comments;
 
     TextInputLayout wantedClass, currentSchool, kupatHolim, maslul;
 
     HashMap<String, String> data;
+
     EditText[] editTexts;
 
     HashMap<Integer, String> ids = new HashMap<>();
+
     TextInputLayout[] spinners;
 
     TextView birthDate, aliyaDate, id;
+
     TextView[] textViews;
 
-
     String[] kupatHolimList = new String[]{"מכבי", "מאוחדת", "כללית", "לאומית"};
+
     String[] currentSchoolList = new String[]{"בית ספר 1", "בית ספר 2", "בית ספר 3", "בית ספר 4"};
+
     String[] wantedClassList = new String[]{"ז", "ח", "ט", "י"};
+
     String[] maslulList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
 
     @Override
@@ -138,8 +148,8 @@ public class FormActivity extends AppCompatActivity {
         maslul = (TextInputLayout) findViewById(R.id.maslul);
         comments = (EditText) findViewById(R.id.comments);
 
-
         wantedClass = (TextInputLayout) findViewById(R.id.wantedClass);
+        seekbarState = (SeekBar) findViewById(R.id.seekbarState);
 
         ArrayAdapter<String> adp = new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, wantedClassList);
         ((MaterialAutoCompleteTextView) wantedClass.getEditText()).setAdapter(adp);
@@ -162,6 +172,7 @@ public class FormActivity extends AppCompatActivity {
 
         textViews = new TextView[]{birthDate, aliyaDate};
 
+        // make a connection between the element in the screen and its destination in the xml file.
         ids.put(R.id.firstName, "firstName");
         ids.put(R.id.lastName, "lastName");
         ids.put(R.id.wantedClass, "wantedClass");
@@ -184,10 +195,6 @@ public class FormActivity extends AppCompatActivity {
         ids.put(R.id.maslul, "maslul");
         ids.put(R.id.comments, "comments");
 
-        // למחוק!!!!!!!!
-        // https://stackoverflow.com/questions/660151/how-to-replicate-androideditable-false-in-code
-        firstName.setKeyListener(null);
-
         Intent gi = getIntent();
 
         id.setText(gi.getStringExtra("id"));
@@ -196,8 +203,7 @@ public class FormActivity extends AppCompatActivity {
         studentFormPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + gi.getStringExtra("id") + ".xml";
         Helper.studentFormDestPath = studentFormPath;
 
-        seekbarState = (SeekBar) findViewById(R.id.seekbarState);
-
+        // make the seekbar untouchable (cant change the current position with it)
         seekbarState.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -207,38 +213,31 @@ public class FormActivity extends AppCompatActivity {
             }
         });
 
-        // all the numeric fields accepts just numbers
+        // make all the numeric fields accepts just numbers
         addressNumber.setTransformationMethod(null);
         homeNumber.setTransformationMethod(null);
         zipCode.setTransformationMethod(null);
         homePhone.setTransformationMethod(null);
         studentPhone.setTransformationMethod(null);
 
-
-        if (ContextCompat.checkSelfPermission(FormActivity.this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(FormActivity.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE}, 100);
-        }
-
-        ActivityCompat.requestPermissions( this,
-                new String[]{
-                        Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-                }, 1
-        );
-
         initDatePicker(birthDate, getSupportFragmentManager());
         initDatePicker(aliyaDate, getSupportFragmentManager());
-        get_xml(gi.getStringExtra("id"));
+        get_local_xml(gi.getStringExtra("id"));
     }
 
-    public void get_xml(String studentID)
+    /**
+     * Gets local student's xml form file we downloaded before (or the temp xml if its not exists)
+     *
+     * @param studentID the student id (in the server we store the student's finish year under his id)
+     */
+    private void get_local_xml(String studentID)
     {
         if (new File(studentFormPath).exists()) {
             XmlHelper.init(studentFormPath, true);
             data = XmlHelper.getData(new ArrayList<String>(ids.values()));
             initUI();
 
-            // get the finishYear of the student
+            // get the finish year of the student (we save the images of the student under the finish year)
             FBref.refStudents.child(studentID).child("finishYear").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dS) {
@@ -259,45 +258,51 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Init the screen fields with the student's last saved info
+     */
     private void initUI()
     {
-        for (int index = 0; index < editTexts.length; index++)
-        {
-            editTexts[index].setText(data.get(ids.get(editTexts[index].getId())));
+        // put all the edittexts data
+        for (EditText editText : editTexts) {
+            editText.setText(data.get(ids.get(editText.getId())));
         }
 
         // put all the spinners data
-        for (int index = 0; index < spinners.length; index++)
-        {
-            ((MaterialAutoCompleteTextView) spinners[index].getEditText()).setText(data.get(ids.get(spinners[index].getId())), false);
+        for (TextInputLayout spinner : spinners) {
+            ((MaterialAutoCompleteTextView) spinner.getEditText()).setText(data.get(ids.get(spinner.getId())), false);
         }
 
         // put all the text views data
-        for (int index = 0; index < textViews.length; index++)
-        {
-            textViews[index].setText(data.get(ids.get(textViews[index].getId())));
+        for (TextView textView : textViews) {
+            textView.setText(data.get(ids.get(textView.getId())));
         }
 
         // the user cannot change its birth date after saving first part of form
         birthDate.setClickable(false);
     }
 
-    public void saveData(View view) {
-
+    /**
+     * Save data to the xml file and move to the next activity if the next button was clicked.
+     *
+     * @param view the view
+     */
+    public void saveData(View view)
+    {
         // if all fields are ok
         if (checkFields()) {
             // create confirm alert dialog
             adb = new AlertDialog.Builder(this);
-            adb.setTitle("אחרי האישור לא תוכל לערוך את השדות הבאים:");
+            adb.setTitle("אחרי האישור לא תוכל לערוך את השדה הבא:");
 
-            adb.setMessage("*. תעודת זהות\n*. תאריך לידה");
+            adb.setMessage("*. תאריך לידה");
 
             adb.setPositiveButton("אישור", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     String typedText = "";
 
-                    // save all the editTexts
+                    // save all the editTexts (not all the fields are must to complete)
                     for (EditText editText : editTexts) {
                         if (editText.getText() == null)
                             typedText = "";
@@ -318,7 +323,7 @@ public class FormActivity extends AppCompatActivity {
                         data.put(ids.get(textView.getId()), typedText);
                     }
 
-                    // if the variable wasnt initialized yet (first time)
+                    // if the studentFinishYear variable wasnt initialized yet (its the first time)
                     if (Helper.studentFinishYear.equals(""))
                         Helper.studentFinishYear = getEndYear();
 
@@ -331,7 +336,7 @@ public class FormActivity extends AppCompatActivity {
                     FBref.refStudents.child(Helper.currentStudentId).child("firstName").setValue(firstName.getText().toString());
                     FBref.refStudents.child(Helper.currentStudentId).child("lastName").setValue(lastName.getText().toString());
 
-                    // if want to move page
+                    // if want to move page (if click on the next button)
                     // this view has parameter of tag - so we know to move page
                     if (view.getTag().equals("move"))
                     {
@@ -351,13 +356,25 @@ public class FormActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Get the student finish year (by the class he want to go next year)
+     *
+     * @return the finish year
+     */
     private String getEndYear()
     {
-        int year = Integer.parseInt(birthDate.getText().toString().split("-")[0]);
+        int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+        String wantClass = wantedClass.getEditText().getText().toString();
 
-        return String.valueOf(year + 18);
+        // if the student wants to go the the 7th grade - he would be 6 years at this school
+        return String.valueOf((6 - Arrays.asList(wantedClassList).indexOf(wantClass)) + currentYear);
     }
 
+    /**
+     * Check if all the fields data are good (for example, some of them must be in hebrew, and some must not be empty)
+     *
+     * @return true if all the fields in this activity are ok (false if they are not)
+     */
     private boolean checkFields()
     {
         boolean isGood = false;
@@ -388,7 +405,34 @@ public class FormActivity extends AppCompatActivity {
         return isGood;
     }
 
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return ture if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
 
+    /**
+     * Where to go when the menu item was selected
+     *
+     * @param item The menu item that was selected.
+     * @return true - if it success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
 
+        // log out the user
+        if (id == R.id.logout)
+        {
+            Helper.logout(getApplicationContext());
+        }
 
+        return true;
+    }
 }

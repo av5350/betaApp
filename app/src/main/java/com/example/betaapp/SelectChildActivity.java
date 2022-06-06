@@ -36,6 +36,8 @@ import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 
+import org.apache.commons.validator.routines.EmailValidator;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -122,8 +124,8 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         newChildDialog.setPositiveButton("הוסף", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // if mail and id are not empty, the id is in len of 9 and the id is good
-                if ((!TextUtils.isEmpty(secondParentEmail.getText().toString())) &&
+                // if mail is in good format, id is not empty and the id is in len of 9 and the id is good
+                if ((EmailValidator.getInstance().isValid(secondParentEmail.getText().toString())) &&
                         (!TextUtils.isEmpty(studentID.getText().toString())) &&
                         (studentID.getText().toString().length() == 9) && (Helper.checkID(studentID.getText().toString()))) {
                     checkIdInDB(studentID.getText().toString(), secondParentEmail.getText().toString());
