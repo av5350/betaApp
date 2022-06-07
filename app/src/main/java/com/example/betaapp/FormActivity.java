@@ -222,7 +222,7 @@ public class FormActivity extends AppCompatActivity {
 
         initDatePicker(birthDate, getSupportFragmentManager());
         initDatePicker(aliyaDate, getSupportFragmentManager());
-        get_local_xml(gi.getStringExtra("id"));
+        getLocalXml(gi.getStringExtra("id"));
     }
 
     /**
@@ -230,7 +230,7 @@ public class FormActivity extends AppCompatActivity {
      *
      * @param studentID the student id (in the server we store the student's finish year under his id)
      */
-    private void get_local_xml(String studentID)
+    private void getLocalXml(String studentID)
     {
         if (new File(studentFormPath).exists()) {
             XmlHelper.init(studentFormPath, true);

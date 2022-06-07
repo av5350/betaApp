@@ -1,6 +1,5 @@
 package com.example.betaapp;
 
-import static com.example.betaapp.Helper.initDatePicker;
 import static com.example.betaapp.Helper.isEmpty;
 import static com.example.betaapp.Helper.isHebrew;
 
@@ -11,6 +10,8 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -63,9 +64,10 @@ public class FormParentsActivity extends AppCompatActivity {
         maritalStatus = (TextInputLayout) findViewById(R.id.maritalStatus);
         parentBirthDate = (TextView) findViewById(R.id.parentBirthDate);
 
-        parentType = (TextView) findViewById(R.id.parentType); // just for ui
+        parentType = (TextView) findViewById(R.id.parentType); // just for ui (if screen is form mom/dad now)
         seekbarState = (SeekBar) findViewById(R.id.seekbarState);
 
+        // the user could not change the seekbar state by clicking
         seekbarState.setOnTouchListener(new View.OnTouchListener()
         {
             @Override
@@ -86,6 +88,11 @@ public class FormParentsActivity extends AppCompatActivity {
         // which activity we are now (dad/mom)
         isDadActivity = gi.getBooleanExtra("dad", true) ? "dad" : "mom";
 
+        // all the numeric fields accepts just numbers
+        parentID.setTransformationMethod(null);
+        parentEducationYears.setTransformationMethod(null);
+        parentPhone.setTransformationMethod(null);
+
         ids.put(R.id.parentFirstName, isDadActivity + "FirstName");
         ids.put(R.id.parentLastName, isDadActivity + "LastName");
         ids.put(R.id.parentID, isDadActivity + "ID");
@@ -96,47 +103,58 @@ public class FormParentsActivity extends AppCompatActivity {
         ids.put(R.id.parentPhone, isDadActivity + "Phone");
         ids.put(R.id.parentEmail, isDadActivity + "Email");
 
-        // all the numeric fields accepts just numbers
-        parentID.setTransformationMethod(null);
-        parentEducationYears.setTransformationMethod(null);
-        parentPhone.setTransformationMethod(null);
+        getXmlData();
+        initUI();
+        Helper.initDatePicker(parentBirthDate, getSupportFragmentManager());
+    }
 
+    /**
+     * This function gets the updated screen elements fields data
+     * from the student's xml form
+     */
+    private void getXmlData()
+    {
         // get the current data from the xml file
         ArrayList<String> wantedXmlFields = new ArrayList<>(ids.values());
         wantedXmlFields.add(isDadActivity + "MaritalStatus");
         wantedXmlFields.add(isDadActivity + "BirthDate");
         data = XmlHelper.getData(wantedXmlFields);
-        initUI();
-        initDatePicker(parentBirthDate, getSupportFragmentManager());
     }
 
+    /**
+     * Init the screen fields with the student's last saved info
+     * Or from the logged user info (name, phone, mail)
+     * And change the title of te activity for the mom or dad
+     */
     private void initUI()
     {
-        // put all EditTexts data
+        // get all EditTexts data from the xml form
         for (EditText editText : editTexts) {
             editText.setText(data.get(ids.get(editText.getId())));
         }
 
-        maritalStatus.getEditText().setText(data.get(isDadActivity + "MaritalStatus"));
+        ((MaterialAutoCompleteTextView) maritalStatus.getEditText()).setText(data.get(isDadActivity + "MaritalStatus"), false);
         parentBirthDate.setText(data.get(isDadActivity + "BirthDate"));
 
+        // change the name of the activity (for mom/dad) and change the seekbar state
         if (isDadActivity.equals("mom"))
         {
             parentType.setText("פרטי אם");
             seekbarState.setProgress(3);
         }
 
-        // if its the first time entering the activity
-        if (parentFirstName.getText().toString() == null)
-        {
-            FBref.refUsers.child(FBref.auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    boolean isUserDad = snapshot.child("isDad").getValue(Boolean.class);
+        // get logged in user data from firebase
+        FBref.refUsers.child(FBref.auth.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                // is the user who fill the form is the dad or mom of the student
+                boolean isUserDad = snapshot.child("isDad").getValue(Boolean.class);
 
-                    // if its the relevant activity for the user (mom/dad)
-                    if (isDadActivity.equals("dad") == isUserDad)
-                    {
+                // if its the relevant activity for the user (mom/dad)
+                if (isDadActivity.equals("dad") == isUserDad)
+                {
+                    // if its the first time entering the activity
+                    if (parentFirstName.getText().toString() == null) {
                         parentFirstName.setText(snapshot.child("firstName").getValue(String.class));
                         parentLastName.setText(snapshot.child("lastName").getValue(String.class));
 
@@ -145,23 +163,27 @@ public class FormParentsActivity extends AppCompatActivity {
                         parentPhone.setText(user.getPhoneNumber());
                         parentEmail.setText(user.getEmail());
                     }
-                }
 
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
+                    // for the logged in parent - avoid from changing this data (name, phone, mail)
+                    parentFirstName.setKeyListener(null);
+                    parentLastName.setKeyListener(null);
+                    parentPhone.setKeyListener(null);
+                    parentEmail.setKeyListener(null);
                 }
-            });
-        }
-        // if the there is a data already - avoid from changing it! - just view it
-        else {
-            // https://stackoverflow.com/questions/660151/how-to-replicate-androideditable-false-in-code
-            parentFirstName.setKeyListener(null);
-            parentLastName.setKeyListener(null);
-            parentPhone.setKeyListener(null);
-            parentEmail.setKeyListener(null);
-        }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+            }
+        });
     }
 
+    /**
+     * Save elements fields to the student's xml form.
+     * Or also move activity if the next button was clicked
+     *
+     * @param view the view
+     */
     public void saveData(View view) {
         // if all fields are ok
         if (checkFields()) {
@@ -202,6 +224,12 @@ public class FormParentsActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Check if all the fields data are good
+     * (for example,some of them must be in hebrew, and some must not be empty)
+     *
+     * @return true if all the fields in this activity are ok (false if they are not)
+     */
     private boolean checkFields()
     {
         boolean isGood = false;
@@ -230,7 +258,43 @@ public class FormParentsActivity extends AppCompatActivity {
         return isGood;
     }
 
+    /**
+     * Go back to the last screen (confirm activity or to the dad activity)
+     *
+     * @param view the view
+     */
     public void back(View view) {
         finish();
+    }
+
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return ture if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Where to go when the menu item was selected
+     *
+     * @param item The menu item that was selected.
+     * @return true - if it success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        // log out the user
+        if (id == R.id.logout)
+        {
+            Helper.logout(getApplicationContext());
+        }
+
+        return true;
     }
 }

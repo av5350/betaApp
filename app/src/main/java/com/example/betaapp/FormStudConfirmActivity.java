@@ -79,6 +79,7 @@ public class FormStudConfirmActivity extends AppCompatActivity {
 
     /**
      * Save elements fields to the student's xml form.
+     * Or also move activity if the next button was clicked
      *
      * @param view the view
      */
