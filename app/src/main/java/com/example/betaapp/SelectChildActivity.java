@@ -75,7 +75,7 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
     /**
      * Init the welcome message (with the parents first name), and fill the listview data with the children id
      */
-    public void initUI()
+    private void initUI()
     {
         FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
