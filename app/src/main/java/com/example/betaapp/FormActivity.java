@@ -116,7 +116,7 @@ public class FormActivity extends AppCompatActivity {
 
     String[] currentSchoolList = new String[]{"בית ספר 1", "בית ספר 2", "בית ספר 3", "בית ספר 4"};
 
-    String[] wantedClassList = new String[]{"ז", "ח", "ט", "י"};
+    String[] wantedClassList = new String[]{"ז", "ח", "ט", "י", "יא", "יב"};
 
     String[] maslulList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
 
@@ -241,7 +241,7 @@ public class FormActivity extends AppCompatActivity {
             FBref.refStudents.child(studentID).child("finishYear").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dS) {
-                    Helper.studentFinishYear = dS.getValue(String.class);
+                    Helper.studentFinishYear = dS.getValue(Integer.class);
                 }
 
                 @Override
@@ -324,7 +324,7 @@ public class FormActivity extends AppCompatActivity {
                     }
 
                     // if the studentFinishYear variable wasnt initialized yet (its the first time)
-                    if (Helper.studentFinishYear.equals(""))
+                    if (Helper.studentFinishYear == 0)
                         Helper.studentFinishYear = getEndYear();
 
                     // cannot edit the birthdate anymore
@@ -361,13 +361,13 @@ public class FormActivity extends AppCompatActivity {
      *
      * @return the finish year
      */
-    private String getEndYear()
+    private int getEndYear()
     {
         int currentYear = Calendar.getInstance().get(Calendar.YEAR);
         String wantClass = wantedClass.getEditText().getText().toString();
 
         // if the student wants to go the the 7th grade - he would be 6 years at this school
-        return String.valueOf((6 - Arrays.asList(wantedClassList).indexOf(wantClass)) + currentYear);
+        return ((6 - Arrays.asList(wantedClassList).indexOf(wantClass)) + currentYear);
     }
 
     /**

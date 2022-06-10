@@ -9,7 +9,6 @@ public class Student {
     private int finishYear;
     private int status;
     private int formState;
-    //todo: אין סיכוי שיהיה כמה ריאיונות עם תלמיד? לשאול את איציק
 
     public Student(){
 

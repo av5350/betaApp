@@ -27,7 +27,7 @@ import java.util.regex.Pattern;
 
 public class Helper {
     public static String studentFormDestPath = "";
-    public static String studentFinishYear = "";
+    public static int studentFinishYear = 0;
 
     public static String currentStudentId = "";
 

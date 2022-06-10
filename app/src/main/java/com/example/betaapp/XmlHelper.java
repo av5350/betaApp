@@ -121,7 +121,7 @@ public class XmlHelper {
     private static void uploadFileToFirebase()
     {
         Uri file = Uri.fromFile(new File(Helper.studentFormDestPath));
-        UploadTask uploadTask = FBref.storageRef.child("/forms").child(Helper.studentFinishYear).child(file.getLastPathSegment()).putFile(file);
+        UploadTask uploadTask = FBref.storageRef.child("/forms").child("" + Helper.studentFinishYear).child(file.getLastPathSegment()).putFile(file);
 
         // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener() {

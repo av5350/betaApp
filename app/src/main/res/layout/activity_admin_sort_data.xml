@@ -22,8 +22,20 @@
             android:layout_height="0dp"
             android:layout_weight="2" />
 
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:text="בחר אילו נתונים להציג"
+            android:textSize="20sp" />
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+
         <Spinner
-            android:id="@+id/yearSpinner"
+            android:id="@+id/sortClassSpinner"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="5" />
