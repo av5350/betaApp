@@ -40,6 +40,7 @@ public class FormParentsActivity extends AppCompatActivity {
     SeekBar seekbarState;
 
     String isDadActivity; // if the activity is Dad/mom
+    boolean showActivityOnce; // if the child have 1 parent - show activity once
 
     HashMap<String, String> data;
     EditText[] editTexts;
@@ -87,6 +88,7 @@ public class FormParentsActivity extends AppCompatActivity {
 
         // which activity we are now (dad/mom)
         isDadActivity = gi.getBooleanExtra("dad", true) ? "dad" : "mom";
+        showActivityOnce = gi.getBooleanExtra("showActivityOnce", false);
 
         // all the numeric fields accepts just numbers
         parentID.setTransformationMethod(null);
@@ -209,15 +211,15 @@ public class FormParentsActivity extends AppCompatActivity {
             // this view has parameter of tag - so we know to move page
             if (view.getTag().equals("move"))
             {
-                // move to mom activity
-                if (isDadActivity.equals("dad")) {
-                    Intent si = new Intent(FormParentsActivity.this, FormParentsActivity.class);
-                    si.putExtra("dad", false); // false = mom
-                    startActivity(si);
-                }
-                else
+                if (showActivityOnce || isDadActivity.equals("mom"))
                 {
                     Intent si = new Intent(FormParentsActivity.this, FormFilesActivity.class);
+                    startActivity(si);
+                }
+                else // move to mom activity
+                {
+                    Intent si = new Intent(FormParentsActivity.this, FormParentsActivity.class);
+                    si.putExtra("dad", false); // false = mom
                     startActivity(si);
                 }
             }
@@ -236,7 +238,7 @@ public class FormParentsActivity extends AppCompatActivity {
 
         // check non empty fields and that fields are in hebrew
         // and check that the user entered birthdate
-        if ((!isEmpty(parentFirstName, null) && !isEmpty(parentLastName, null) && !isEmpty(parentID, null)
+        if ((!isEmpty(parentFirstName, null) && !isEmpty(parentLastName, null) && (parentID.getText().toString().length() == 9) && (Helper.checkID(parentID.getText().toString()))
                 && !isEmpty(parentBirthCountry, null) && !isEmpty(parentProfession, null)
                 && !isEmpty(parentEducationYears, null) && !isEmpty(parentPhone, null) && !isEmpty(parentEmail, null)
                 && !isEmpty(maritalStatus.getEditText(), maritalStatus))
@@ -293,6 +295,11 @@ public class FormParentsActivity extends AppCompatActivity {
         if (id == R.id.logout)
         {
             Helper.logout(getApplicationContext());
+        }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(FormParentsActivity.this, CreditsActivity.class);
+            startActivity(si);
         }
 
         return true;

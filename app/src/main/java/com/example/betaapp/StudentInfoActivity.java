@@ -8,10 +8,14 @@ import androidx.core.content.res.ResourcesCompat;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,23 +29,38 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FileDownloadTask;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
+import com.itextpdf.text.Document;
 import com.itextpdf.text.DocumentException;
+import com.itextpdf.text.Image;
+import com.itextpdf.text.Paragraph;
+import com.itextpdf.text.Rectangle;
 import com.itextpdf.text.pdf.AcroFields;
 import com.itextpdf.text.pdf.BaseFont;
+import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.PdfStamper;
+import com.itextpdf.text.pdf.PdfWriter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+/**
+ * The type Student info activity.
+ */
 public class StudentInfoActivity extends AppCompatActivity {
     TextView studentFirstName, studentLastName, studentID, studentCity, studentSchool, studentGrade,
             studentMaslul, phoneParent, emailParent, typeParent, parentName;
-    String parentPhone, parentEmail;
+    String parentPhone, parentEmail, studentId;
+
     ProgressDialog progressDialog;
 
     HashMap<String, String> fields; // student's form fields
@@ -50,16 +69,6 @@ public class StudentInfoActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_student_info);
-
-        /*
-
-        בform המתאים של האבא או אמא לחסום עריכה של הפרטים שם שם משפחה... טלפון... אחרי שעשינו להם SAVE פעם ראשונה
-        זאת אומרת מתי שיש שם כבר נתונים אחנו יודעים שהיה עריכה- אז לחסום שלא ישנו את זה יותר
-
-
-        ****************************
-        מה קורה אם אני רוצה להוסיף פעמיים את הילד שלי (את התעודת זהות שלו פעמיים)
-         */
 
         studentFirstName = (TextView) findViewById(R.id.studentFirstName);
         studentLastName = (TextView) findViewById(R.id.studentLastName);
@@ -74,10 +83,11 @@ public class StudentInfoActivity extends AppCompatActivity {
         parentName = (TextView) findViewById(R.id.parentName);
 
         Intent gi = getIntent();
-        String localFormPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + gi.getStringExtra("studentID") + ".xml";
+        studentId = gi.getStringExtra("studentID");
+        String localFormPath = getApplicationContext().getCacheDir().getAbsolutePath() + "/" + studentId + ".xml";
         XmlHelper.init(localFormPath, false);
 
-        studentID.setText("תעודת זהות: " + gi.getStringExtra("studentID"));
+        studentID.setText("תעודת זהות: " + studentId);
 
         // get all relevant data from the xml
         fields = getFieldsData();
@@ -88,8 +98,18 @@ public class StudentInfoActivity extends AppCompatActivity {
         studentGrade.setText("כיתה: " + fields.get("wantedClass"));
         studentMaslul.setText("מסלול: " + fields.get("maslul"));
 
-        // get logged user info (its mail + phone)
-        FBref.refStudents.child(gi.getStringExtra("studentID")).child("parentUID").addListenerForSingleValueEvent(new ValueEventListener() {
+        // get the info of the parent who filled the form (its mail + phone)
+        getFillerInfo(studentId);
+    }
+
+    /**
+     * This function gets info (name, phone, email) of the parent who filled the form to this student
+     *
+     * @param studentID the id of the student
+     */
+    private void getFillerInfo(String studentID)
+    {
+        FBref.refStudents.child(studentID).child("parentUID").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 String parentUID = snapshot.getValue(String.class);
@@ -130,6 +150,12 @@ public class StudentInfoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * This function creates a list of the fields we want to get from the xml form
+     * and then, it gets those fields values from the form
+     *
+     * @return hash map of those fields and their values
+     */
     private HashMap<String, String> getFieldsData()
     {
         ArrayList<String> wantedTags = new ArrayList<>();
@@ -140,9 +166,35 @@ public class StudentInfoActivity extends AppCompatActivity {
         wantedTags.add("wantedClass");
         wantedTags.add("maslul");
 
+        // also fields for the pdf option
+        wantedTags.add("birthDateHebrew");
+        wantedTags.add("wantedClass");
+        wantedTags.add("street");
+        wantedTags.add("addressNumber");
+        wantedTags.add("city");
+        wantedTags.add("maslul");
+        wantedTags.add("dadFirstName");
+        wantedTags.add("dadLastName");
+        wantedTags.add("dadID");
+        wantedTags.add("dadProfession");
+        wantedTags.add("dadEmail");
+        wantedTags.add("dadPhone");
+        wantedTags.add("momFirstName");
+        wantedTags.add("momLastName");
+        wantedTags.add("momID");
+        wantedTags.add("momProfession");
+        wantedTags.add("momEmail");
+        wantedTags.add("momPhone");
+        wantedTags.add("comments");
+
         return XmlHelper.getData(wantedTags);
     }
 
+    /**
+     * Open whatsapp app with the parent phone number.
+     *
+     * @param view the view
+     */
     public void openWhatsapp(View view) {
         // send the user to whatsapp view (app)
         Intent intent = new Intent(Intent.ACTION_VIEW);
@@ -150,6 +202,11 @@ public class StudentInfoActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    /**
+     * Open email with new conversation with the parent email address.
+     *
+     * @param view the view
+     */
     public void openEmail(View view) {
         Uri uri = Uri.parse("mailto:").buildUpon()
                 .appendQueryParameter("to", parentEmail)
@@ -159,7 +216,12 @@ public class StudentInfoActivity extends AppCompatActivity {
         startActivity(Intent.createChooser(emailIntent, "שלח באמצעות..."));
     }
 
-    public void createPDF(View view)
+    /**
+     * download a template pdf form from firebase. and then call to a function that fill it
+     *
+     * @param view the view
+     */
+    public void downloadTemplatePDF(View view)
     {
         StorageReference pathReference;
         File localFile;
@@ -208,6 +270,9 @@ public class StudentInfoActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * This function edits a pdf form with the data from the student's xml form
+     */
     private void editPDF() {
         File file = new File(getApplicationContext().getFilesDir().getAbsolutePath() + "/form_pdf.pdf");
 
@@ -218,20 +283,91 @@ public class StudentInfoActivity extends AppCompatActivity {
             form.setGenerateAppearances(true);
             BaseFont unicode = BaseFont.createFont("res/font/rubik.ttf", BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
             form.addSubstitutionFont(unicode);
+
+            // put all the form's values
             form.setField("first_name", fields.get("firstName"));
             form.setField("last_name", fields.get("lastName"));
+            form.setField("birthDateHebrew", fields.get("birthDateHebrew"));
+            form.setField("stud_id", studentId);
+            form.setField("wantedClass", fields.get("wantedClass"));
+            form.setField("address", fields.get("street") + " " + fields.get("addressNumber") + ", " + fields.get("city"));
+            form.setField("maslul", fields.get("maslul"));
+            form.setField("dadFirstName", fields.get("dadFirstName"));
+            form.setField("dadLastName", fields.get("dadLastName"));
+            form.setField("dadID", fields.get("dadID"));
+            form.setField("dadProfession", fields.get("dadProfession"));
+            form.setField("dadEmail", fields.get("dadEmail"));
+            form.setField("dadPhone", fields.get("dadPhone"));
+            form.setField("momFirstName", fields.get("momFirstName"));
+            form.setField("momLastName", fields.get("momLastName"));
+            form.setField("momID", fields.get("momID"));
+            form.setField("momProfession", fields.get("momProfession"));
+            form.setField("momEmail", fields.get("momEmail"));
+            form.setField("momPhone", fields.get("momPhone"));
+            form.setField("comments", fields.get("comments"));
+
             stamper.setFormFlattening(true); // set the form to read only state
             stamper.close();
             reader.close();
 
-            showPDF(file.getPath());
-
-            Toast.makeText(StudentInfoActivity.this, "סתפם הודעה", Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
+            // if the student have a profile picture - add it to the pdf
+            // otherwise - just show the current pdf
+            addStudentPicture();
+        }
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    /**
+     * This function adds to the student's profile picture f it exists
+     * If is so, the function adds the picture to the pdf and then show the result pdf
+     * If the picture not exists, the function just show the pdf without the picture
+     */
+    private void addStudentPicture()
+    {
+        File studentPhotoFile = new File(getApplicationContext().getCacheDir().getAbsolutePath() + "/studImg.png");
+
+        // try to get the student picture from firebase (and download it)
+        FBref.storageRef.child("files").child(studentId).child("student_picture").getFile(studentPhotoFile).addOnSuccessListener(new OnSuccessListener<FileDownloadTask.TaskSnapshot>() {
+            @Override
+            public void onSuccess(FileDownloadTask.TaskSnapshot taskSnapshot) {
+                // Local file has been created
+                try {
+                    PdfReader pdfReader = new PdfReader(getApplicationContext().getFilesDir().getAbsolutePath() + "/form_pdf.pdf");
+                    PdfStamper pdfStamper = new PdfStamper(pdfReader,
+                            new FileOutputStream(getApplicationContext().getFilesDir().getAbsolutePath() + "/form.pdf"));
+
+                    Image image = Image.getInstance(Uri.fromFile(studentPhotoFile).toString());
+
+                    image.scaleToFit(200, 200);
+                    image.setAbsolutePosition(40, 40);
+                    pdfStamper.getOverContent(1).addImage(image);
+
+                    pdfStamper.close();
+                    pdfReader.close();
+
+                    showPDF(getApplicationContext().getFilesDir().getAbsolutePath() + "/form.pdf");
+
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                // If the student doesn't have already a picture of himself - just show the form until now
+                showPDF(getApplicationContext().getFilesDir().getAbsolutePath() + "/form_pdf.pdf");
+            }
+        });
+    }
+
+    /**
+     * This function opens a pdf in new application that the user choose
+     *
+     * @param pdfPath the path to the pdf file
+     */
     private void showPDF(String pdfPath)
     {
         File pdfFile = new File(pdfPath);
@@ -261,5 +397,41 @@ public class StudentInfoActivity extends AppCompatActivity {
         catch (Exception e){
             Toast.makeText(StudentInfoActivity.this, "אפליקציה לפתיחת קובץ זה לא נמצאה במכשיר", Toast.LENGTH_SHORT).show();
         }
+    }
+
+    /**
+     * Create the options menu
+     *
+     * @param menu the menu
+     * @return ture if success
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main, menu);
+        return true;
+    }
+
+    /**
+     * Where to go when the menu item was selected
+     *
+     * @param item The menu item that was selected.
+     * @return true - if it success
+     */
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+
+        // log out the user
+        if (id == R.id.logout)
+        {
+            Helper.logout(getApplicationContext());
+        }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(StudentInfoActivity.this, CreditsActivity.class);
+            startActivity(si);
+        }
+
+        return true;
     }
 }

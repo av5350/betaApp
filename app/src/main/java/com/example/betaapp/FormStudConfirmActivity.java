@@ -14,6 +14,10 @@ import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Toast;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -100,9 +104,45 @@ public class FormStudConfirmActivity extends AppCompatActivity {
             // this view has parameter of tag - so we know to move page
             if (view.getTag().equals("move"))
             {
-                Intent si = new Intent(FormStudConfirmActivity.this, FormParentsActivity.class);
-                si.putExtra("dad", true); // false = mom
-                startActivity(si);
+                FBref.refStudents.child(Helper.currentStudentId).child("secondParentEmail")
+                        .addListenerForSingleValueEvent(new ValueEventListener(){
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                // if the student have 2 parents
+                                if (!snapshot.getValue(String.class).equals(""))
+                                {
+                                    Intent si = new Intent(FormStudConfirmActivity.this, FormParentsActivity.class);
+                                    si.putExtra("dad", true); // false = mom
+                                    si.putExtra("showActivityOnce", false);
+                                    startActivity(si);
+                                }
+                                else {
+                                    // if needs to show just 1 parent - check who is the filler (logged in user) gender
+                                    FBref.refUsers.child(FBref.auth.getUid()).child("isDad")
+                                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                @Override
+                                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                    boolean isDad = snapshot.getValue(Boolean.class);
+
+                                                    Intent si = new Intent(FormStudConfirmActivity.this, FormParentsActivity.class);
+                                                    si.putExtra("dad", isDad); // false = mom, true = dad
+                                                    si.putExtra("showActivityOnce", true);
+                                                    startActivity(si);
+                                                }
+
+                                                @Override
+                                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                                }
+                                            });
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
         }
     }
@@ -142,6 +182,11 @@ public class FormStudConfirmActivity extends AppCompatActivity {
         if (id == R.id.logout)
         {
             Helper.logout(getApplicationContext());
+        }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(FormStudConfirmActivity.this, CreditsActivity.class);
+            startActivity(si);
         }
 
         return true;

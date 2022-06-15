@@ -25,12 +25,26 @@ import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The type Helper class for the app.
+ */
 public class Helper {
+    // the local path of the student's form
     public static String studentFormDestPath = "";
+
     public static int studentFinishYear = 0;
 
     public static String currentStudentId = "";
 
+    /**
+     * Check if EditText or designed spinner is empty
+     * and if its empty, the function put error hint on the element
+     *
+     * @param et     the edittext
+     * @param layout the layout (for designed spinner elements)
+     *               (null if the check is on edittext)
+     * @return if the edittext or the spinner is empty or not
+     */
     public static boolean isEmpty(EditText et, TextInputLayout layout)
     {
         boolean isEmpty = false;
@@ -52,13 +66,21 @@ public class Helper {
         return isEmpty;
     }
 
+    /**
+     * Is edittext's value is in hebrew or not
+     * empty value is still in hebrew
+     *
+     * @param et the EditText to check
+     * @return if the value is in hebrew or not
+     */
     public static boolean isHebrew(EditText et)
     {
         boolean matchFound = true; // if text is "" its still good
         String text = et.getText().toString();
 
         if (!TextUtils.isEmpty(text)) {
-            // א-ת and '
+            //" א-ת and '
+            // are ok
             Pattern pattern = Pattern.compile("^[\u0590-\u05FF \" ’ ']+$");
             Matcher matcher = pattern.matcher(et.getText().toString());
 
@@ -72,15 +94,16 @@ public class Helper {
         return matchFound;
     }
 
-    // FragmentManager because of the function getSupportFragmentManager:
-    // to interact with the fragments associated with the material design date picker
-    // and to put any error in logcat (because of the date picker)
+    /**
+     * Init date picker.
+     *
+     * @param textView the text view that would start the date picker dialog
+     * @param manager  the manager so we can interact with the material designed date pickers
+     */
     public static void initDatePicker(TextView textView, FragmentManager manager) {
         CalendarConstraints.Builder calendarConstraintBuilder = new CalendarConstraints.Builder();
 
-        // set the validator point forward from june
-        // this mean the all the dates before the June month
-        // are blocked
+        // set the validator point before now
         calendarConstraintBuilder.setValidator(DateValidatorPointBackward.now());
 
         MaterialDatePicker.Builder dateBuilder = MaterialDatePicker.Builder.datePicker();
@@ -119,9 +142,9 @@ public class Helper {
     }
 
     /**
-     *  This function removes the Credential if user doesn't want to stay connected
+     * This function removes the Credential if user doesn't want to stay connected
      *
-     *  @param context the screen context
+     * @param context the screen context
      */
     public static void removeUserCredential(Context context)
     {
@@ -131,6 +154,11 @@ public class Helper {
         editor.commit();
     }
 
+    /**
+     * Logout the user from the app.
+     *
+     * @param context the context
+     */
     public static void logout(Context context) {
         FBref.auth.signOut();
         removeUserCredential(context); // remove the Credential because we logged out
@@ -140,6 +168,12 @@ public class Helper {
         context.startActivity(si);
     }
 
+    /**
+     * Check if inputted id is a read israeli id or not
+     *
+     * @param id the id to check
+     * @return true - valid id, false - its not a valid id
+     */
     public static boolean checkID(String id)
     {
         int sumIdNumbers = 0;

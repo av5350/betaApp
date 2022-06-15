@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity {
                 if ((!TextUtils.isEmpty(firstName.getText().toString()) && !TextUtils.isEmpty(lastName.getText().toString())) && (Helper.isHebrew(firstName) && Helper.isHebrew(lastName)))
                 {
                     // upload the new user to firebase database
-                    User user = new User(FBref.auth.getCurrentUser().getUid(), 2, null, firstName.getText().toString(), lastName.getText().toString(), radioGroup.getCheckedRadioButtonId() == dadBtn.getId());
+                    User user = new User(FBref.auth.getCurrentUser().getUid(), 2, firstName.getText().toString(), lastName.getText().toString(), radioGroup.getCheckedRadioButtonId() == dadBtn.getId());
                     FBref.refUsers.child(FBref.auth.getCurrentUser().getUid()).setValue(user);
 
                     // if the user don't want to stay connected all time - remove the credential from SharedPreferences

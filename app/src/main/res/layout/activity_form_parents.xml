@@ -29,7 +29,7 @@
             android:layout_height="0dp"
             android:layout_weight="0.5"
             android:clickable="false"
-            android:max="6"
+            android:max="4"
             android:progress="2" />
 
         <Space

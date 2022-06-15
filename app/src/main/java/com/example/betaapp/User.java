@@ -2,58 +2,125 @@ package com.example.betaapp;
 
 import java.util.ArrayList;
 
+/**
+ * The type User.
+ */
 public class User {
     private String uid;
     private int role;
-    private ArrayList<String> childrenID;
     private String firstName;
     private String lastName;
     private boolean isDad;
 
+    /**
+     * Instantiates a new User.
+     */
     public User(){}
 
-    public User(String uid, int role, ArrayList<String> childrenID, String firstName, String lastName, boolean isDad){
+    /**
+     * Instantiates a new User.
+     *
+     * @param uid       the uid
+     * @param role      the role
+     * @param firstName the first name
+     * @param lastName  the last name
+     * @param isDad     the is dad
+     */
+    public User(String uid, int role, String firstName, String lastName, boolean isDad){
         this.uid = uid;
         this.role = role;
-        this.childrenID = childrenID;
         this.firstName = firstName;
         this.lastName = lastName;
         this.isDad = isDad;
     }
 
-    public String getUid(){
+    /**
+     * Gets uid.
+     *
+     * @return the uid
+     */
+    public String getUid() {
         return uid;
     }
 
-    public int getRole(){
+    /**
+     * Sets uid.
+     *
+     * @param uid the uid
+     */
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    /**
+     * Gets role.
+     *
+     * @return the role
+     */
+    public int getRole() {
         return role;
     }
 
-    public ArrayList<String> getChildrenId(){
-        return childrenID;
+    /**
+     * Sets role.
+     *
+     * @param role the role
+     */
+    public void setRole(int role) {
+        this.role = role;
     }
 
+    /**
+     * Gets first name.
+     *
+     * @return the first name
+     */
     public String getFirstName() {
         return firstName;
     }
 
+    /**
+     * Sets first name.
+     *
+     * @param firstName the first name
+     */
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
+    /**
+     * Gets last name.
+     *
+     * @return the last name
+     */
     public String getLastName() {
         return lastName;
     }
 
+    /**
+     * Sets last name.
+     *
+     * @param lastName the last name
+     */
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public boolean isDad() {
+    /**
+     * Gets is dad.
+     *
+     * @return the is dad
+     */
+    public boolean getIsDad() {
         return isDad;
     }
 
-    public void setDad(boolean dad) {
-        isDad = dad;
+    /**
+     * Sets is dad.
+     *
+     * @param isDad the is dad
+     */
+    public void setIsDad(boolean isDad) {
+        this.isDad = isDad;
     }
 }

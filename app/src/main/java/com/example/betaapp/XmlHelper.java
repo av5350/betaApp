@@ -26,12 +26,21 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+/**
+ * The type Xml helper.
+ */
 public class XmlHelper {
     private static Document doc;
     private static Element root;
+    private static boolean isFirstActivity;
 
-    private static boolean isFirstActivity; // which activity start the init (in first activity we need to save the xml path and finish year in database)
-
+    /**
+     * Init the class.
+     *
+     * @param xmlPath       the xml path
+     * @param firstActivity which activity started the init func
+     *                      (in form first activity we need to save the xml path and finish year in database
+     */
     public static void init(String xmlPath, boolean firstActivity)
     {
         isFirstActivity = firstActivity;
@@ -40,17 +49,12 @@ public class XmlHelper {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
 
         try {
-            // optional, but recommended
-            // process XML securely, avoid attacks like XML External Entities (XXE)
-            //dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
-
             // parse XML file
             DocumentBuilder db = dbf.newDocumentBuilder();
 
             doc = db.parse(new File(xmlPath));
 
             // normalize the data - (hello\n world would be hello world)
-            // http://stackoverflow.com/questions/13786607/normalization-in-dom-parsing-with-java-how-does-it-work
             doc.getDocumentElement().normalize();
 
             root = doc.getDocumentElement();
@@ -60,8 +64,11 @@ public class XmlHelper {
         }
     }
 
-    // finish yer - the year that student will finish school
-
+    /**
+     * Push data to the local xml file and to firebase.
+     *
+     * @param data the data to push (hash map of tag and its value)
+     */
     public static void pushData(HashMap<String, String> data)
     {
         // replace the elements in the xml file
@@ -86,15 +93,22 @@ public class XmlHelper {
         }
     }
 
+    /**
+     * Gets specific tags data from xml file.
+     *
+     * @param wantedTags the wanted tags
+     * @return the data
+     */
     public static HashMap<String, String> getData(ArrayList<String> wantedTags)
     {
         HashMap<String, String> data = new HashMap<>();
         String value = "";
         NodeList questions = root.getChildNodes();
 
-        for (int temp = 0; temp < questions.getLength(); temp++)
+        // move on all the questions tags
+        for (int i = 0; i < questions.getLength(); i++)
         {
-            Node node = questions.item(temp);
+            Node node = questions.item(i);
 
             // don't get the '\n' or '\t' nodes
             if (node.getNodeType() == Node.ELEMENT_NODE)
@@ -102,9 +116,12 @@ public class XmlHelper {
                 // each question's detail
                 Element element = (Element) node;
 
+                // if we wanted to get this tag node
                 if (wantedTags.contains(element.getTagName()))
                 {
                     value = "";
+
+                    // not all tags have right now data in them (some are empty now)
                     if (element.hasChildNodes())
                     {
                         value = element.getChildNodes().item(0).getTextContent();
@@ -118,12 +135,14 @@ public class XmlHelper {
         return data;
     }
 
+    /**
+     * Upload xml file to firebase
+     */
     private static void uploadFileToFirebase()
     {
         Uri file = Uri.fromFile(new File(Helper.studentFormDestPath));
         UploadTask uploadTask = FBref.storageRef.child("/forms").child("" + Helper.studentFinishYear).child(file.getLastPathSegment()).putFile(file);
 
-        // Register observers to listen for when the download is done or if it fails
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception exception) {
@@ -132,9 +151,7 @@ public class XmlHelper {
         }).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                // taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
-                // ...
-
+                // for the first activity - needs to push to db the registration form path in cloud and the finishYear
                 if (isFirstActivity)
                 {
                     // update the registrationFormID path link (in the student in firebase)

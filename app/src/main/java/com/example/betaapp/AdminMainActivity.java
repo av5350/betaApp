@@ -117,6 +117,11 @@ public class AdminMainActivity extends AppCompatActivity {
         {
             Helper.logout(getApplicationContext());
         }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(AdminMainActivity.this, CreditsActivity.class);
+            startActivity(si);
+        }
 
         return true;
     }

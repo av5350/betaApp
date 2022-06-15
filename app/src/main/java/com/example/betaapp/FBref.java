@@ -6,6 +6,9 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 
+/**
+ * The type references to the firebase db
+ */
 public class FBref {
     final static FirebaseAuth auth = FirebaseAuth.getInstance();
 

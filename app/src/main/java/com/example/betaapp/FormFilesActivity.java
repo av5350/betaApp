@@ -282,7 +282,6 @@ public class FormFilesActivity extends AppCompatActivity {
         // if all the *must* fields are completed
         if (greenButtonsRequired.size() == 5)
         {
-            FBref.refStudents.child(Helper.currentStudentId).child("formState").setValue(1);
             FBref.refStudents.child(Helper.currentStudentId).child("status").setValue(1);
             Toast.makeText(FormFilesActivity.this, "השאלון התקבל בהצלחה", Toast.LENGTH_SHORT).show();
 
@@ -331,6 +330,11 @@ public class FormFilesActivity extends AppCompatActivity {
         if (id == R.id.logout)
         {
             Helper.logout(getApplicationContext());
+        }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(FormFilesActivity.this, CreditsActivity.class);
+            startActivity(si);
         }
 
         return true;

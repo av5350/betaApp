@@ -6,4 +6,9 @@
         android:id="@+id/logout"
         android:orderInCategory="100" />
 
+    <item
+        android:title="תודות"
+        android:id="@+id/credits"
+        android:orderInCategory="200" />
+
 </menu>

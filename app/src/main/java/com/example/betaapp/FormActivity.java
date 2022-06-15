@@ -432,7 +432,16 @@ public class FormActivity extends AppCompatActivity {
         {
             Helper.logout(getApplicationContext());
         }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(FormActivity.this, CreditsActivity.class);
+            startActivity(si);
+        }
 
         return true;
+    }
+
+    public void back(View view) {
+        finish();
     }
 }

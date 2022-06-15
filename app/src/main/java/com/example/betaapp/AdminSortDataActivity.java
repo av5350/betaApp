@@ -247,6 +247,11 @@ public class AdminSortDataActivity extends AppCompatActivity implements AdapterV
         {
             Helper.logout(getApplicationContext());
         }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(AdminSortDataActivity.this, CreditsActivity.class);
+            startActivity(si);
+        }
 
         return true;
     }

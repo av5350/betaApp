@@ -27,7 +27,7 @@
     <string name="more_files">קובץ נוסף / הערכה / משהו אחר</string>
 
     <string name="marital_status">מצב משפחתי <font color='#FF0000'>*</font></string>
-    <string name="id">תעודת זהות <font color='#FF0000'>*</font></string>
+    <string name="id">תעודת זהות באורך 9 ספרות <font color='#FF0000'>*</font></string>
     <string name="parent_profession">מקצוע <font color='#FF0000'>*</font></string>
     <string name="education_years">מספר שנות לימוד <font color='#FF0000'>*</font></string>
     <string name="phone">טלפון נייד <font color='#FF0000'>*</font></string>

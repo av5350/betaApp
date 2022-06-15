@@ -238,67 +238,13 @@
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:background="#FFFFFF"
-                        android:onClick="createPDF"
+                        android:onClick="downloadTemplatePDF"
                         app:srcCompat="@drawable/pdf_logo" />
 
                     <Space
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="5.5" />
-
-                </LinearLayout>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp" />
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="ראיון"
-                    android:textSize="20sp"
-                    android:textStyle="bold" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="10dp" />
-
-                <TextView
-                    android:id="@+id/interviewStatus"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:gravity="right"
-                    android:text="TextView"
-                    android:textSize="16sp" />
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="20dp" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
-
-                    <ImageButton
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="#FFFFFF"
-                        app:srcCompat="@drawable/interview_logo" />
-
-                    <Space
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.5" />
-
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="5"
-                        android:gravity="right"
-                        android:text="קביעת תאריך"
-                        android:textSize="16sp" />
 
                 </LinearLayout>
 

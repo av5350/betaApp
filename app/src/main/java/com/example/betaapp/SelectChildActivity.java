@@ -111,7 +111,7 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         final EditText secondParentEmail = new EditText(this);
 
         studentID.setHint("תעודת זהות ילד באורך 9 ספרות");
-        secondParentEmail.setHint("מייל הורה שני");
+        secondParentEmail.setHint("מייל הורה שני. אם אין הורה שני - נא להשאיר ריק");
 
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -124,14 +124,21 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         newChildDialog.setPositiveButton("הוסף", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialogInterface, int i) {
-                // if mail is in good format, id is not empty and the id is in len of 9 and the id is good
-                if ((EmailValidator.getInstance().isValid(secondParentEmail.getText().toString())) &&
-                        (!TextUtils.isEmpty(studentID.getText().toString())) &&
-                        (studentID.getText().toString().length() == 9) && (Helper.checkID(studentID.getText().toString()))) {
-                    checkIdInDB(studentID.getText().toString(), secondParentEmail.getText().toString());
+                // if the id is good - 9 digits and in good format
+                if ((studentID.getText().toString().length() == 9) && (Helper.checkID(studentID.getText().toString()))) {
+                    // if there is no value in the second parent mail field - we know this student has 1 parent
+                    if ((secondParentEmail.getText().toString().equals("")) || (EmailValidator.getInstance().isValid(secondParentEmail.getText().toString())))
+                    {
+                        checkIdInDB(studentID.getText().toString(), secondParentEmail.getText().toString());
+                    }
+                    else // the mail field value is bad
+                    {
+                        Toast.makeText(SelectChildActivity.this, "המייל שהוזן לא בפורמט הנכון, אנא נסה שנית!", Toast.LENGTH_SHORT).show();
+                    }
                 }
-                else {
-                    Toast.makeText(SelectChildActivity.this, "לפחות אחד מן הנתונים שגוי, אנא נסה שנית!", Toast.LENGTH_SHORT).show();
+                else
+                {
+                    Toast.makeText(SelectChildActivity.this, "תעודת הזהות שגויה או אינה בפורמט הנכון, אנא נסה שנית!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -161,7 +168,7 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
                 if (dS.exists())
                     Toast.makeText(SelectChildActivity.this, "תעודת הזהות כבר נמצאת במערכת!", Toast.LENGTH_SHORT).show();
                 else {
-                    Student newStudent = new Student(id, FBref.auth.getCurrentUser().getUid(), secondParentEmail, "", "", 0, 0, 0);
+                    Student newStudent = new Student(id, FBref.auth.getCurrentUser().getUid(), secondParentEmail, "", 0, 0);
                     FBref.refStudents.child(id).setValue(newStudent);
 
                     // update the lv and the list of children of a person in db
@@ -300,6 +307,11 @@ public class SelectChildActivity extends AppCompatActivity implements AdapterVie
         if (id == R.id.logout)
         {
             Helper.logout(getApplicationContext());
+        }
+        else if(id == R.id.credits)
+        {
+            Intent si = new Intent(SelectChildActivity.this, CreditsActivity.class);
+            startActivity(si);
         }
 
         return true;
