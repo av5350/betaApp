@@ -32,6 +32,14 @@ import org.apache.commons.validator.routines.EmailValidator;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * The type Form parents activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity used to get information about student's dad and his mom
+ */
 public class FormParentsActivity extends AppCompatActivity {
     EditText parentFirstName, parentLastName, parentID, parentBirthCountry, parentProfession, parentEducationYears,
             parentWorkPlace, parentPhone, parentEmail;

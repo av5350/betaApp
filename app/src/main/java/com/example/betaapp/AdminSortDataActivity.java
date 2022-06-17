@@ -33,6 +33,12 @@ import java.util.Calendar;
 
 /**
  * The type Admin sort data activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This Activity gives to the admin option to sort the students data
+ *      and to choose student that he wants to know more about
  */
 public class AdminSortDataActivity extends AppCompatActivity implements AdapterView.OnItemClickListener, AdapterView.OnItemSelectedListener {
     ListView studentsLV;

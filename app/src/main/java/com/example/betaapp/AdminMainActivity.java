@@ -17,6 +17,11 @@ import com.google.firebase.database.ValueEventListener;
 
 /**
  * The type Admin main activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This Activity gives to the admin shortcuts for the options he have in the app
  */
 public class AdminMainActivity extends AppCompatActivity {
     TextView welcomeAdmin, submittedFormCount;

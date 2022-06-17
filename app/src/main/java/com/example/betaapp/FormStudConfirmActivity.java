@@ -23,6 +23,12 @@ import java.util.HashMap;
 
 /**
  * The type Form stud confirm activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity used to get confirms from the student's parents
+ *      and to know how many brothers and sisters he has
  */
 public class FormStudConfirmActivity extends AppCompatActivity {
     EditText numberBrothers;

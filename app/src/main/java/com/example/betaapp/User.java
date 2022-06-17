@@ -4,6 +4,12 @@ import java.util.ArrayList;
 
 /**
  * The type User.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This class represents a new user that was registered to the app
+ *      and will be pushed to the firebase
  */
 public class User {
     private String uid;

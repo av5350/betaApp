@@ -47,6 +47,12 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * The type Main activity - login and signup activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity is the fist activity the user see
+ *      Here he can login or signup to the app
  */
 public class MainActivity extends AppCompatActivity {
     EditText mailET, phoneET, codeET;

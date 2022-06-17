@@ -8,6 +8,11 @@ import com.google.firebase.storage.StorageReference;
 
 /**
  * The type references to the firebase db
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This are consts for the database (itself, to the root, and to the storage)
  */
 public class FBref {
     final static FirebaseAuth auth = FirebaseAuth.getInstance();

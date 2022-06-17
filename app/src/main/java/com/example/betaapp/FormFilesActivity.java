@@ -41,6 +41,11 @@ import java.util.Set;
 
 /**
  * The type Form files activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity is to get files about the student (picture of him, picture of parent id...)
  */
 public class FormFilesActivity extends AppCompatActivity {
     Uri photoUri;

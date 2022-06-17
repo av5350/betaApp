@@ -55,6 +55,11 @@ import java.util.List;
 
 /**
  * The type Student info activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity shows specific student information (from his form) to the admin
  */
 public class StudentInfoActivity extends AppCompatActivity {
     TextView studentFirstName, studentLastName, studentID, studentCity, studentSchool, studentGrade,

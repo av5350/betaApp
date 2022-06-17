@@ -27,6 +27,11 @@ import java.util.regex.Pattern;
 
 /**
  * The type Helper class for the app.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This class is for some used functions to appear once in the application code (here)
  */
 public class Helper {
     // the local path of the student's form

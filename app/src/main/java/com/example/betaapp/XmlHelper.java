@@ -28,6 +28,11 @@ import javax.xml.transform.stream.StreamResult;
 
 /**
  * The type Xml helper.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This class used to parse an xml file (read data from, write data, push xml to firebase)
  */
 public class XmlHelper {
     private static Document doc;

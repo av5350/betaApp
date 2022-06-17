@@ -2,6 +2,12 @@ package com.example.betaapp;
 
 /**
  * The type Student.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This class represents a new user that was created in the app
+ *      and will be pushed to the firebase
  */
 public class Student {
     private String studentID;

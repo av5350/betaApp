@@ -44,6 +44,12 @@ import java.util.ArrayList;
 
 /**
  * The type Select child activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity is for the parent to add new child
+ *      or to select one that he wants to fill his form
  */
 public class SelectChildActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
     AlertDialog.Builder newChildDialog;

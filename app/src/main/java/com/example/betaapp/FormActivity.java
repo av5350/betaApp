@@ -86,7 +86,12 @@ import java.util.stream.Stream;
 import org.apache.commons.validator.routines.EmailValidator;
 
 /**
- * The type Form activity.
+ * The type first Form activity.
+ * @author Itey Weintraub <av5350@bs.amalnet.k12.il>
+ * @version	1
+ * short description:
+ *
+ *      This activity is to get student's information (name, id, mail...)
  */
 public class FormActivity extends AppCompatActivity {
     SeekBar seekbarState;
