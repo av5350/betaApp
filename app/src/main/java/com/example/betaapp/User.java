@@ -1,6 +1,5 @@
 package com.example.betaapp;
 
-import java.util.ArrayList;
 
 /**
  * The type User.
