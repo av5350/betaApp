@@ -161,7 +161,7 @@ public class FormParentsActivity extends AppCompatActivity {
                 if (isDadActivity.equals("dad") == isUserDad)
                 {
                     // if its the first time entering the activity
-                    if (parentFirstName.getText().toString() == null) {
+                    if (parentFirstName.getText().toString().equals("")) {
                         parentFirstName.setText(snapshot.child("firstName").getValue(String.class));
                         parentLastName.setText(snapshot.child("lastName").getValue(String.class));
 

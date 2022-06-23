@@ -104,11 +104,11 @@ public class FormActivity extends AppCompatActivity {
 
     String[] kupatHolimList = new String[]{"מכבי", "מאוחדת", "כללית", "לאומית"};
 
-    String[] currentSchoolList = new String[]{"בית ספר 1", "בית ספר 2", "בית ספר 3", "בית ספר 4"};
+    String[] currentSchoolList = new String[]{"יסודות", "נאות אברהם", "אפיקים בנגב", "עוזיאל", "מוריה"};
 
     String[] wantedClassList = new String[]{"ז", "ח", "ט", "י", "יא", "יב"};
 
-    String[] maslulList = new String[]{"מסלול 1", "מסלול 2", "מסלול 3", "מסלול 4"};
+    String[] maslulList = new String[]{"מסלול עיוני", "מסלול מדעי", "מסלול נחשון"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -268,8 +268,8 @@ public class FormActivity extends AppCompatActivity {
             textView.setText(data.get(ids.get(textView.getId())));
         }
 
-        // the user cannot change its birth date after saving first part of form
-        birthDate.setClickable(false);
+        // the user cannot change its wanted class after saving first part of form
+        wantedClass.setEnabled(false);
     }
 
     /**
@@ -285,7 +285,7 @@ public class FormActivity extends AppCompatActivity {
             adb = new AlertDialog.Builder(this);
             adb.setTitle("אחרי האישור לא תוכל לערוך את השדה הבא:");
 
-            adb.setMessage("*. תאריך לידה");
+            adb.setMessage("*. רישום לכיתה");
 
             adb.setPositiveButton("אישור", new DialogInterface.OnClickListener() {
                 @Override
@@ -317,8 +317,8 @@ public class FormActivity extends AppCompatActivity {
                     if (Helper.studentFinishYear == 0)
                         Helper.studentFinishYear = getEndYear();
 
-                    // cannot edit the birthdate anymore
-                    birthDate.setClickable(false);
+                    // cannot edit the wanted class field anymore
+                    wantedClass.setEnabled(false);
 
                     XmlHelper.pushData(data);
 

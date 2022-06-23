@@ -120,7 +120,7 @@ public class StudentInfoActivity extends AppCompatActivity {
                         parentEmail = parentFields.get(isParentDad + "Email");
 
                         phoneParent.setText("מספר טלפון: " + parentPhone);
-                        emailParent.setText("כתובת מייל: " + parentEmail);
+                        emailParent.setText("כתובת מייל: " + "\n" + parentEmail);
                     }
 
                     @Override
